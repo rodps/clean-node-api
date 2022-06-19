@@ -7,6 +7,7 @@
     "test": "jest --passWithNoTests",
     "test:staged": "npm test -- --findRelatedTests --listTests",
     "test:unit": "npm test -- --onlyChanged --noStackTrace",
+    "test:ci": "npm test -- --coverage",
     "prepare": "husky install"
   },
   "keywords": [],
