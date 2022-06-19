@@ -13,4 +13,10 @@ describe('Entity ID', () => {
     expect(id).toBeFalsy()
     expect(err).toBe('Invalid UUID')
   })
+
+  test('Should return an instance with same UUID', () => {
+    const validUuid = '58abc676-8362-4145-9225-3016abdbb828'
+    const { id } = EntityID.create(validUuid)
+    expect(id?.id).toBe(validUuid)
+  })
 })
