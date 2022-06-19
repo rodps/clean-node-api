@@ -1,4 +1,5 @@
 import { EntityID } from './entity-id'
+import faker from 'faker'
 
 describe('Entity ID', () => {
   test('Should return an instance with a valid UUID when no one is provided', () => {
@@ -15,7 +16,7 @@ describe('Entity ID', () => {
   })
 
   test('Should return an instance with same valid UUID provided and no error', () => {
-    const validUuid = '58abc676-8362-4145-9225-3016abdbb828'
+    const validUuid = faker.datatype.uuid()
     const { id, err } = EntityID.create(validUuid)
     expect(id).toBe(validUuid)
     expect(err).toBeFalsy()
