@@ -1,21 +1,24 @@
 import { v4 as uuid, validate } from 'uuid'
+import { ValueObject } from './value-object'
 
-export interface EntityIDResult {
-  id?: EntityID
+interface EntityIDProps {
+  id?: string
   err?: string
 }
 
-export class EntityID {
-  readonly id: string
+export class EntityID extends ValueObject<string, string> {
+  readonly id?: string
 
-  private constructor (id: string) {
+  private constructor ({ id, err }: EntityIDProps) {
+    super(id, err)
     this.id = id
   }
 
-  static create (id?: string): EntityIDResult {
+  static create (id?: string): EntityID {
     if (id) {
-      return validate(id) ? { id: new EntityID(id) } : { err: 'Invalid UUID' }
+      const isValidUUID = validate(id)
+      return isValidUUID ? new EntityID({ id }) : new EntityID({ err: 'Invalid UUID' })
     }
-    return { id: new EntityID(uuid()) }
+    return new EntityID({ id: uuid() })
   }
 }
