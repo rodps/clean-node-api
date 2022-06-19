@@ -1,9 +1,16 @@
 import { EntityID } from './entity-id'
 
 describe('Entity ID', () => {
-  test('Should return an instance with a valid UUID when no param are passed', () => {
-    const entityId = new EntityID()
+  test('Should return an instance with a valid UUID when no param is provided', () => {
+    const { id, err } = EntityID.create()
     const validUUIDRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-    expect(entityId.id).toMatch(validUUIDRegex)
+    expect(err).toBeFalsy()
+    expect(id?.id).toMatch(validUUIDRegex)
+  })
+
+  test('Should return an error if UUID provided is invalid', () => {
+    const { id, err } = EntityID.create('invalid_uuid')
+    expect(id).toBeFalsy()
+    expect(err).toBe('Invalid UUID')
   })
 })
