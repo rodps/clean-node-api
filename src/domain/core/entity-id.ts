@@ -1,17 +1,17 @@
 import { v4 as uuid, validate } from 'uuid'
-import { ValueObject } from './value-object'
 
 interface EntityIDProps {
   id?: string
   err?: string
 }
 
-export class EntityID extends ValueObject<string, string> {
+export class EntityID {
   readonly id?: string
+  readonly err?: string
 
   private constructor ({ id, err }: EntityIDProps) {
-    super(id, err)
     this.id = id
+    this.err = err
   }
 
   static create (id?: string): EntityID {
