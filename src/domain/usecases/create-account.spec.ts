@@ -1,5 +1,6 @@
 import { UserProps } from '../entities/user'
 import { CreateUserRepository } from '../ports/repositories/create-user-repository'
+import { PasswordHasher } from '../ports/utils/password-hasher'
 import { CreateAccount } from './create-account'
 
 class CreateUserRepositorySpy implements CreateUserRepository {
@@ -10,16 +11,29 @@ class CreateUserRepositorySpy implements CreateUserRepository {
   }
 }
 
+class PasswordHasherStub implements PasswordHasher {
+  hash (password: string): string {
+    return 'hashed_password'
+  }
+
+  compare (plainText: string, hash: string): boolean {
+    return true
+  }
+}
+
 interface SutTypes {
   createUserRepositorySpy: CreateUserRepositorySpy
+  passwordHasherStub: PasswordHasherStub
   sut: CreateAccount
 }
 
 const makeSut = (): SutTypes => {
   const createUserRepositorySpy = new CreateUserRepositorySpy()
-  const sut = new CreateAccount(createUserRepositorySpy)
+  const passwordHasherStub = new PasswordHasherStub()
+  const sut = new CreateAccount(createUserRepositorySpy, passwordHasherStub)
   return {
     createUserRepositorySpy,
+    passwordHasherStub,
     sut
   }
 }
@@ -56,6 +70,21 @@ describe('Create account', () => {
     }
     const { sut, createUserRepositorySpy } = makeSut()
     sut.exec(userProps)
-    expect(createUserRepositorySpy.user).toEqual(userProps)
+    const { name, email, password } = createUserRepositorySpy.user
+    expect(name).toBe(userProps.name)
+    expect(email).toBe(userProps.email)
+    expect(password).not.toBe(userProps.password)
+  })
+
+  test('Should call create user repository with hashed password', () => {
+    const userProps = {
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    }
+    const { sut, createUserRepositorySpy, passwordHasherStub } = makeSut()
+    const hashedPassword = passwordHasherStub.hash(userProps.password)
+    sut.exec(userProps)
+    expect(createUserRepositorySpy.user.password).toBe(hashedPassword)
   })
 })
