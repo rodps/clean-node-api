@@ -5,7 +5,7 @@ import { CreateAccount } from './create-account'
 
 class CreateUserRepositorySpy implements CreateUserRepository {
   user: UserProps
-  create (user: UserProps): boolean {
+  async create (user: UserProps): Promise<boolean> {
     this.user = user
     return true
   }
@@ -39,52 +39,46 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Create account', () => {
-  test('Should return true if user repository returns true', () => {
-    const userProps = {
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    }
+  const userProps = {
+    name: 'any_name',
+    email: 'any_email@mail.com',
+    password: 'any_password'
+  }
+
+  test('Should return true if user repository returns true', async () => {
     const { sut } = makeSut()
-    const result = sut.exec(userProps)
+    const result = await sut.exec(userProps)
     expect(result).toBe(true)
   })
 
-  test('Should return false if user repository returns false', () => {
-    const userProps = {
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    }
+  test('Should return false if user repository returns false', async () => {
     const { sut, createUserRepositorySpy } = makeSut()
-    jest.spyOn(createUserRepositorySpy, 'create').mockReturnValue(false)
-    const result = sut.exec(userProps)
+    jest.spyOn(createUserRepositorySpy, 'create').mockReturnValue(Promise.resolve(false))
+    const result = await sut.exec(userProps)
     expect(result).toBe(false)
   })
 
-  test('Should call create user repository with correct values', () => {
-    const userProps = {
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    }
+  test('Should call create user repository with correct values', async () => {
     const { sut, createUserRepositorySpy } = makeSut()
-    sut.exec(userProps)
+    await sut.exec(userProps)
     const { name, email, password } = createUserRepositorySpy.user
     expect(name).toBe(userProps.name)
     expect(email).toBe(userProps.email)
     expect(password).not.toBe(userProps.password)
   })
 
-  test('Should call create user repository with hashed password', () => {
-    const userProps = {
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    }
+  test('Should call create user repository with hashed password', async () => {
     const { sut, createUserRepositorySpy, passwordHasherStub } = makeSut()
     const hashedPassword = passwordHasherStub.hash(userProps.password)
-    sut.exec(userProps)
+    await sut.exec(userProps)
     expect(createUserRepositorySpy.user.password).toBe(hashedPassword)
+  })
+
+  test('Should throw if create user repository throws', async () => {
+    const { sut, createUserRepositorySpy } = makeSut()
+    jest.spyOn(createUserRepositorySpy, 'create').mockImplementation(() => {
+      throw new Error()
+    })
+    expect(sut.exec(userProps)).rejects.toThrow()
   })
 })
