@@ -1,6 +1,7 @@
-import { UserProps } from '../entities/user'
-import { CreateUserRepository } from '../ports/repositories/create-user-repository'
-import { PasswordHasher } from '../ports/utils/password-hasher'
+/* eslint-disable @typescript-eslint/no-floating-promises */
+import { UserProps } from '@/domain/entities/user'
+import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
+import { PasswordHasher } from '@/domain/ports/crypt/password-hasher'
 import { CreateAccount } from './create-account'
 
 class CreateUserRepositorySpy implements CreateUserRepository {

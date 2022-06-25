@@ -1,6 +1,6 @@
-import { UserProps } from '../entities/user'
-import { CreateUserRepository } from '../ports/repositories/create-user-repository'
-import { PasswordHasher } from '../ports/utils/password-hasher'
+import { UserProps } from '@/domain/entities/user'
+import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
+import { PasswordHasher } from '@/domain/ports/crypt/password-hasher'
 
 export class CreateAccount {
   constructor (
