@@ -5,6 +5,6 @@ export class CreateAccount {
   constructor (readonly createUserRepo: CreateUserRepository) {}
 
   exec (user: UserProps): boolean {
-    return true
+    return this.createUserRepo.create(user)
   }
 }
