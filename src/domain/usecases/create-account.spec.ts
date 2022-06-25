@@ -8,6 +8,20 @@ class CreateUserRepositorySpy implements CreateUserRepository {
   }
 }
 
+interface SutTypes {
+  createUserRepo: CreateUserRepositorySpy
+  sut: CreateAccount
+}
+
+const makeSut = (): SutTypes => {
+  const createUserRepo = new CreateUserRepositorySpy()
+  const sut = new CreateAccount(createUserRepo)
+  return {
+    createUserRepo,
+    sut
+  }
+}
+
 describe('Create account', () => {
   test('Should return true if user repository returns true', () => {
     const userProps = {
@@ -15,9 +29,8 @@ describe('Create account', () => {
       email: 'any_email@mail.com',
       password: 'any_password'
     }
-    const createUserRepo = new CreateUserRepositorySpy()
-    const createAccount = new CreateAccount(createUserRepo)
-    const result = createAccount.exec(userProps)
+    const { sut } = makeSut()
+    const result = sut.exec(userProps)
     expect(result).toBe(true)
   })
 
@@ -27,10 +40,9 @@ describe('Create account', () => {
       email: 'any_email@mail.com',
       password: 'any_password'
     }
-    const createUserRepo = new CreateUserRepositorySpy()
+    const { sut, createUserRepo } = makeSut()
     jest.spyOn(createUserRepo, 'create').mockReturnValue(false)
-    const createAccount = new CreateAccount(createUserRepo)
-    const result = createAccount.exec(userProps)
+    const result = sut.exec(userProps)
     expect(result).toBe(false)
   })
 })
