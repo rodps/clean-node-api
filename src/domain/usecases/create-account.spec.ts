@@ -45,20 +45,20 @@ describe('Create account', () => {
     password: 'any_password'
   }
 
-  test('Should return true if user repository returns true', async () => {
+  test('Should return true if CreateUserRepository returns true', async () => {
     const { sut } = makeSut()
     const result = await sut.exec(userProps)
     expect(result).toBe(true)
   })
 
-  test('Should return false if user repository returns false', async () => {
+  test('Should return false if CreateUserRepository returns false', async () => {
     const { sut, createUserRepositorySpy } = makeSut()
     jest.spyOn(createUserRepositorySpy, 'create').mockReturnValue(Promise.resolve(false))
     const result = await sut.exec(userProps)
     expect(result).toBe(false)
   })
 
-  test('Should call create user repository with correct values', async () => {
+  test('Should call CreateUserRepository with correct values', async () => {
     const { sut, createUserRepositorySpy } = makeSut()
     await sut.exec(userProps)
     const { name, email, password } = createUserRepositorySpy.user
@@ -67,16 +67,24 @@ describe('Create account', () => {
     expect(password).not.toBe(userProps.password)
   })
 
-  test('Should call create user repository with hashed password', async () => {
+  test('Should call CreateUserRepository with hashed password', async () => {
     const { sut, createUserRepositorySpy, passwordHasherStub } = makeSut()
     const hashedPassword = passwordHasherStub.hash(userProps.password)
     await sut.exec(userProps)
     expect(createUserRepositorySpy.user.password).toBe(hashedPassword)
   })
 
-  test('Should throw if create user repository throws', async () => {
+  test('Should throw if CreateUserRepository throws', async () => {
     const { sut, createUserRepositorySpy } = makeSut()
     jest.spyOn(createUserRepositorySpy, 'create').mockImplementation(() => {
+      throw new Error()
+    })
+    await expect(sut.exec(userProps)).rejects.toThrow()
+  })
+
+  test('Should throw if PasswordHasher throws', async () => {
+    const { sut, passwordHasherStub } = makeSut()
+    jest.spyOn(passwordHasherStub, 'hash').mockImplementation(() => {
       throw new Error()
     })
     await expect(sut.exec(userProps)).rejects.toThrow()
