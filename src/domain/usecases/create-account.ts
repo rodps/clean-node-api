@@ -8,9 +8,9 @@ export class CreateAccount {
     readonly passwordHasher: PasswordHasher
   ) {}
 
-  exec (user: UserProps): boolean {
+  async exec (user: UserProps): Promise<boolean> {
     const hashedPassword = this.passwordHasher.hash(user.password)
-    return this.createUserRepo.create({
+    return await this.createUserRepo.create({
       name: user.name,
       email: user.email,
       password: hashedPassword
