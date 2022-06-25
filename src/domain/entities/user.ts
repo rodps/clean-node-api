@@ -1,4 +1,4 @@
-import { Entity } from '../entity-base'
+import { Entity } from './entity-base'
 
 export interface UserProps {
   name: string
