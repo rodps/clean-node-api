@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { UserProps } from '@/domain/entities/user'
 import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
 import { PasswordHasher } from '@/domain/ports/crypt/password-hasher'
@@ -80,6 +79,6 @@ describe('Create account', () => {
     jest.spyOn(createUserRepositorySpy, 'create').mockImplementation(() => {
       throw new Error()
     })
-    expect(sut.exec(userProps)).rejects.toThrow()
+    await expect(sut.exec(userProps)).rejects.toThrow()
   })
 })
