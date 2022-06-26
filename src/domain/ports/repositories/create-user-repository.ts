@@ -1,5 +1,5 @@
-import { UserProps } from '@/domain/entities/user'
+import { UserModel } from '@/domain/models/user'
 
 export interface CreateUserRepository {
-  create: (user: UserProps) => Promise<boolean>
+  create: (user: UserModel) => Promise<boolean>
 }
