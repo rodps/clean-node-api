@@ -1,32 +1,7 @@
-import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
-import { PasswordHasher } from '@/domain/ports/crypt/password-hasher'
 import { CreateAccount } from './create-account'
-import { UserModel } from '../models/user'
-import { IdGenerator } from '../ports/id/id-generator'
-
-class CreateUserRepositorySpy implements CreateUserRepository {
-  user: UserModel
-  async create (user: UserModel): Promise<boolean> {
-    this.user = user
-    return true
-  }
-}
-
-class PasswordHasherStub implements PasswordHasher {
-  hash (password: string): string {
-    return 'hashed_password'
-  }
-
-  compare (plainText: string, hash: string): boolean {
-    return true
-  }
-}
-
-class IdGeneratorStub implements IdGenerator {
-  generate (): string {
-    return 'any_id'
-  }
-}
+import { CreateUserRepositorySpy } from '@mocks/domain/ports/repositories/create-user-repository-spy'
+import { PasswordHasherStub } from '@mocks/domain/ports/crypt/password-hasher-stub'
+import { IdGeneratorStub } from '@mocks/domain/ports/id/id-generator-stub'
 
 interface SutTypes {
   createUserRepositorySpy: CreateUserRepositorySpy
@@ -39,7 +14,10 @@ const makeSut = (): SutTypes => {
   const createUserRepositorySpy = new CreateUserRepositorySpy()
   const passwordHasherStub = new PasswordHasherStub()
   const idGeneratorStub = new IdGeneratorStub()
-  const sut = new CreateAccount(createUserRepositorySpy, passwordHasherStub, idGeneratorStub)
+  const sut = new CreateAccount(
+    createUserRepositorySpy,
+    passwordHasherStub,
+    idGeneratorStub)
   return {
     createUserRepositorySpy,
     passwordHasherStub,
