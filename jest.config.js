@@ -6,5 +6,9 @@ module.exports = {
   testEnvironment: 'jest-environment-node',
   transform: {
     '.+\\.ts$': 'ts-jest'
+  },
+  moduleNameMapper: {
+    '@mocks/(.*)': '<rootDir>/tests/mocks/$1',
+    '@/(.*)': '<rootDir>/src/$1'
   }
 }
