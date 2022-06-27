@@ -38,17 +38,19 @@ describe('Create account', () => {
     password: 'any_password'
   }
 
-  test('should return true if CreateUserRepository returns true', async () => {
-    const { sut } = makeSut()
-    const result = await sut.exec(userProps)
-    expect(result).toBe(true)
+  test('should return id of created user if email provided is not in use', async () => {
+    const { sut, idGeneratorStub } = makeSut()
+    const { res, err } = await sut.exec(userProps)
+    expect(res?.id).toBe(idGeneratorStub.id)
+    expect(err).toBeFalsy()
   })
 
-  test('should return false if CreateUserRepository returns false', async () => {
-    const { sut, createUserRepositorySpy } = makeSut()
-    jest.spyOn(createUserRepositorySpy, 'create').mockReturnValue(Promise.resolve(false))
-    const result = await sut.exec(userProps)
-    expect(result).toBe(false)
+  test('should return err if email provided is already in use', async () => {
+    const { sut, checkEmailExistsRepositorySpy } = makeSut()
+    jest.spyOn(checkEmailExistsRepositorySpy, 'check').mockResolvedValue(true)
+    const { res, err } = await sut.exec(userProps)
+    expect(res).toBeFalsy()
+    expect(err).toBe('This email is already in use')
   })
 
   test('should call CreateUserRepository with correct values', async () => {

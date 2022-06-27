@@ -1,7 +1,9 @@
 import { IdGenerator } from '@/domain/ports/id/id-generator'
 
 export class IdGeneratorStub implements IdGenerator {
+  id: string
   generate (): string {
-    return 'any_id'
+    this.id = 'any_id'
+    return this.id
   }
 }
