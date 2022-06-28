@@ -1,13 +1,13 @@
 import { CreateAccount } from './create-account'
 import { CreateUserRepositorySpy } from '@mocks/domain/ports/repositories/create-user-repository-spy'
-import { PasswordHasherStub } from '@mocks/domain/ports/crypt/password-hasher-stub'
+import { PasswordHasherSpy } from '@/../tests/mocks/domain/ports/crypt/password-hasher-spy'
 import { IdGeneratorStub } from '@mocks/domain/ports/id/id-generator-stub'
 import { CheckEmailExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-email-exists-repository-spy'
 
 interface SutTypes {
   createUserRepositorySpy: CreateUserRepositorySpy
   checkEmailExistsRepositorySpy: CheckEmailExistsRepositorySpy
-  passwordHasherStub: PasswordHasherStub
+  passwordHasherSpy: PasswordHasherSpy
   idGeneratorStub: IdGeneratorStub
   sut: CreateAccount
 }
@@ -15,17 +15,17 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const createUserRepositorySpy = new CreateUserRepositorySpy()
   const checkEmailExistsRepositorySpy = new CheckEmailExistsRepositorySpy()
-  const passwordHasherStub = new PasswordHasherStub()
+  const passwordHasherSpy = new PasswordHasherSpy()
   const idGeneratorStub = new IdGeneratorStub()
   const sut = new CreateAccount(
     createUserRepositorySpy,
     checkEmailExistsRepositorySpy,
-    passwordHasherStub,
+    passwordHasherSpy,
     idGeneratorStub)
   return {
     createUserRepositorySpy,
     checkEmailExistsRepositorySpy,
-    passwordHasherStub,
+    passwordHasherSpy,
     idGeneratorStub,
     sut
   }
@@ -77,8 +77,8 @@ describe('Create account', () => {
   })
 
   test('should call CreateUserRepository with hashed password', async () => {
-    const { sut, createUserRepositorySpy, passwordHasherStub } = makeSut()
-    const hashedPassword = passwordHasherStub.hash(userProps.password)
+    const { sut, createUserRepositorySpy, passwordHasherSpy } = makeSut()
+    const hashedPassword = passwordHasherSpy.hash(userProps.password)
     await sut.exec(userProps)
     expect(createUserRepositorySpy.user.password).toBe(hashedPassword)
   })
@@ -92,8 +92,8 @@ describe('Create account', () => {
   })
 
   test('should throw if PasswordHasher throws', async () => {
-    const { sut, passwordHasherStub } = makeSut()
-    jest.spyOn(passwordHasherStub, 'hash').mockImplementation(() => {
+    const { sut, passwordHasherSpy } = makeSut()
+    jest.spyOn(passwordHasherSpy, 'hash').mockImplementation(() => {
       throw new Error()
     })
     await expect(sut.exec(userProps)).rejects.toThrow()
