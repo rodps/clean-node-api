@@ -10,6 +10,8 @@ export class Authorize {
   ) {}
 
   exec (email: string, password: string): AuthorizeResult {
-    return { err: 'Email not registered' }
+    const user = this.loadUserByEmailRepository.load(email)
+    if (!user) return { err: 'Email not registered' }
+    return { err: 'Incorrect password' }
   }
 }
