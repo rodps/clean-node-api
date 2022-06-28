@@ -83,4 +83,21 @@ describe('Authorize', () => {
     expect(err).toBeFalsy()
     expect(token).toBe(accessTokenGeneratorSpy.result)
   })
+
+  test('should call accessTokenGenerator with correct values', () => {
+    const {
+      sut,
+      loadUserByEmailRepositorySpy,
+      accessTokenGeneratorSpy,
+      passwordHasherSpy
+    } = makeSut()
+    loadUserByEmailRepositorySpy.result = fakeUser
+    passwordHasherSpy.compareResult = true
+    const payload = {
+      id: loadUserByEmailRepositorySpy.result.id,
+      userName: loadUserByEmailRepositorySpy.result.name
+    }
+    sut.exec('correct_email', 'correct_password')
+    expect(accessTokenGeneratorSpy.payload).toEqual(payload)
+  })
 })
