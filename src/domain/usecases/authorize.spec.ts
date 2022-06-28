@@ -3,6 +3,7 @@ import { PasswordHasherSpy } from '@/../tests/mocks/domain/ports/crypt/password-
 import { LoadUserByEmailRepositorySpy } from '@mocks/domain/ports/repositories/load-user-by-email-repository-spy'
 import { Authorize } from './authorize'
 import faker from 'faker'
+import { UserModel } from '../models/user'
 
 interface SutTypes {
   loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy
@@ -26,6 +27,14 @@ const makeSut = (): SutTypes => {
     passwordHasherSpy,
     sut
   }
+}
+
+const fakeUser: UserModel = {
+  id: faker.datatype.uuid(),
+  createdAt: faker.date.past(),
+  name: faker.internet.userName(),
+  email: faker.internet.email(),
+  password: faker.internet.password()
 }
 
 describe('Authorize', () => {
@@ -52,6 +61,15 @@ describe('Authorize', () => {
     expect(err).toBe('Incorrect password')
   })
 
+  test('should call passwordHasher.compare with correct values', () => {
+    const { sut, passwordHasherSpy, loadUserByEmailRepositorySpy } = makeSut()
+    loadUserByEmailRepositorySpy.result = fakeUser
+    const password = faker.internet.password()
+    sut.exec('any_email', password)
+    expect(passwordHasherSpy.plainText).toBe(password)
+    expect(passwordHasherSpy.passwordHash).toBe(loadUserByEmailRepositorySpy.result.password)
+  })
+
   test('should return an access token if email and password are correct', () => {
     const {
       sut,
@@ -59,13 +77,7 @@ describe('Authorize', () => {
       accessTokenGeneratorSpy,
       passwordHasherSpy
     } = makeSut()
-    loadUserByEmailRepositorySpy.result = {
-      id: 'any_id',
-      createdAt: new Date(),
-      name: 'any_name',
-      email: 'any_email',
-      password: 'hashed_password'
-    }
+    loadUserByEmailRepositorySpy.result = fakeUser
     passwordHasherSpy.compareResult = true
     const { token, err } = sut.exec('correct_email', 'correct_password')
     expect(err).toBeFalsy()
