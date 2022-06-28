@@ -10,7 +10,10 @@ export class LoadUserByEmailRepositorySpy implements LoadUserByEmailRepository {
     password: 'any_password'
   }
 
+  email: string
+
   load (email: string): UserModel | null {
+    this.email = email
     return this.result
   }
 }

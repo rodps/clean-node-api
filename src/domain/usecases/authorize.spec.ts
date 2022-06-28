@@ -2,6 +2,7 @@ import { AccessTokenGeneratorSpy } from '@/../tests/mocks/domain/ports/crypt/acc
 import { PasswordHasherSpy } from '@/../tests/mocks/domain/ports/crypt/password-hasher-spy'
 import { LoadUserByEmailRepositorySpy } from '@mocks/domain/ports/repositories/load-user-by-email-repository-spy'
 import { Authorize } from './authorize'
+import faker from 'faker'
 
 interface SutTypes {
   loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy
@@ -36,15 +37,15 @@ describe('Authorize', () => {
     expect(err).toBe('Email not registered')
   })
 
+  test('should call loadUserByEmailRepo with correct values', () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut()
+    const email = faker.internet.email()
+    sut.exec(email, 'any_password')
+    expect(loadUserByEmailRepositorySpy.email).toBe(email)
+  })
+
   test('should return err if password is wrong', () => {
-    const { sut, loadUserByEmailRepositorySpy, passwordHasherSpy } = makeSut()
-    loadUserByEmailRepositorySpy.result = {
-      id: 'any_id',
-      createdAt: new Date(),
-      name: 'any_name',
-      email: 'any_email',
-      password: 'hashed_password'
-    }
+    const { sut, passwordHasherSpy } = makeSut()
     passwordHasherSpy.compareResult = false
     const { token, err } = sut.exec('any_email', 'incorrect_password')
     expect(token).toBeFalsy()
