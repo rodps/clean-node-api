@@ -42,16 +42,16 @@ describe('Create account', () => {
   test('should return id of created user if email provided is not in use', async () => {
     const { sut, idGeneratorStub, checkEmailExistsRepositorySpy } = makeSut()
     checkEmailExistsRepositorySpy.result = false
-    const { res, err } = await sut.exec(fakeUser)
-    expect(res?.id).toBe(idGeneratorStub.id)
+    const { id, err } = await sut.exec(fakeUser)
+    expect(id).toBe(idGeneratorStub.id)
     expect(err).toBeFalsy()
   })
 
   test('should return err if email provided is already in use', async () => {
     const { sut, checkEmailExistsRepositorySpy } = makeSut()
     checkEmailExistsRepositorySpy.result = true
-    const { res, err } = await sut.exec(fakeUser)
-    expect(res).toBeFalsy()
+    const { id, err } = await sut.exec(fakeUser)
+    expect(id).toBeFalsy()
     expect(err).toBe('This email is already in use')
   })
 
