@@ -40,7 +40,8 @@ const fakeUser = {
 
 describe('Create account', () => {
   test('should return id of created user if email provided is not in use', async () => {
-    const { sut, idGeneratorStub } = makeSut()
+    const { sut, idGeneratorStub, checkEmailExistsRepositorySpy } = makeSut()
+    checkEmailExistsRepositorySpy.result = false
     const { res, err } = await sut.exec(fakeUser)
     expect(res?.id).toBe(idGeneratorStub.id)
     expect(err).toBeFalsy()
@@ -48,7 +49,7 @@ describe('Create account', () => {
 
   test('should return err if email provided is already in use', async () => {
     const { sut, checkEmailExistsRepositorySpy } = makeSut()
-    jest.spyOn(checkEmailExistsRepositorySpy, 'check').mockResolvedValue(true)
+    checkEmailExistsRepositorySpy.result = true
     const { res, err } = await sut.exec(fakeUser)
     expect(res).toBeFalsy()
     expect(err).toBe('This email is already in use')
