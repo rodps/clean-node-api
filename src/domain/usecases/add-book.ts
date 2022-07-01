@@ -1,4 +1,5 @@
 import { IdGenerator } from '../ports/id/id-generator'
+import { AddBookRepository } from '../ports/repositories/add-book-repository'
 import { CheckISBNExistsRepository } from '../ports/repositories/check-isbn-exists-repository'
 
 export interface AddBookParams {
@@ -22,13 +23,15 @@ export interface IdOrError {
 export class AddBook {
   constructor (
     private readonly idGenerator: IdGenerator,
-    private readonly checkIsbnExistsRepository: CheckISBNExistsRepository
+    private readonly checkIsbnExistsRepository: CheckISBNExistsRepository,
+    private readonly addBookRepository: AddBookRepository
   ) {}
 
-  exec (params: AddBookParams): IdOrError {
+  async exec (params: AddBookParams): Promise<IdOrError> {
     if (this.checkIsbnExistsRepository.check(params.isbn)) {
       return { err: 'This isbn is already registered' }
     }
+    await this.addBookRepository.add(params)
     return { id: this.idGenerator.generate() }
   }
 }
