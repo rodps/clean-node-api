@@ -49,4 +49,10 @@ describe('Add Book', () => {
     expect(id).toBeFalsy()
     expect(err).toBe('This isbn is already registered')
   })
+
+  test('should call CheckISBExistsRepository with correct value', () => {
+    const { sut, checkISBNExistsRepositorySpy } = makeSut()
+    sut.exec(fakeBook)
+    expect(checkISBNExistsRepositorySpy.isbn).toBe(fakeBook.isbn)
+  })
 })
