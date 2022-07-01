@@ -1,4 +1,3 @@
-import { IdGeneratorStub } from '@mocks/domain/ports/id/id-generator-stub'
 import { AddBook, AddBookParams } from './add-book'
 import faker from 'faker'
 import { CheckISBNExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-isbn-exists-repository-spy'
@@ -18,19 +17,16 @@ const fakeBook: AddBookParams = {
 }
 
 interface SutTypes {
-  idGenerator: IdGeneratorStub
   checkISBNExistsRepositorySpy: CheckISBNExistsRepositorySpy
   addBookRepositorySpy: AddBookRepositorySpy
   sut: AddBook
 }
 
 const makeSut = (): SutTypes => {
-  const idGenerator = new IdGeneratorStub()
   const checkISBNExistsRepositorySpy = new CheckISBNExistsRepositorySpy()
   const addBookRepositorySpy = new AddBookRepositorySpy()
-  const sut = new AddBook(idGenerator, checkISBNExistsRepositorySpy, addBookRepositorySpy)
+  const sut = new AddBook(checkISBNExistsRepositorySpy, addBookRepositorySpy)
   return {
-    idGenerator,
     checkISBNExistsRepositorySpy,
     addBookRepositorySpy,
     sut
@@ -39,10 +35,9 @@ const makeSut = (): SutTypes => {
 
 describe('Add Book', () => {
   test('should return the id of the added book', async () => {
-    const { sut, idGenerator } = makeSut()
-    idGenerator.id = faker.datatype.uuid()
+    const { sut, addBookRepositorySpy } = makeSut()
     const { id, err } = await sut.exec(fakeBook)
-    expect(id).toBe(idGenerator.id)
+    expect(id).toBe(addBookRepositorySpy.id)
     expect(err).toBeFalsy()
   })
 
