@@ -1,10 +1,12 @@
-import { UserModel } from '@/domain/models/user'
 import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
+import { CreateAccountParams } from '@/domain/usecases/create-account'
+import faker from 'faker'
 
 export class CreateUserRepositorySpy implements CreateUserRepository {
-  user: UserModel
-  async create (user: UserModel): Promise<boolean> {
+  user: CreateAccountParams
+  id: string = faker.datatype.uuid()
+  async create (user: CreateAccountParams): Promise<string> {
     this.user = user
-    return true
+    return await Promise.resolve(this.id)
   }
 }

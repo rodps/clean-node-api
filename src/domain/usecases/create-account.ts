@@ -1,6 +1,5 @@
 import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
 import { PasswordHasher } from '@/domain/ports/crypt/password-hasher'
-import { IdGenerator } from '../ports/id/id-generator'
 import { CheckEmailExistsRepository } from '../ports/repositories/check-email-exists-repository'
 
 export interface CreateAccountParams {
@@ -18,8 +17,7 @@ export class CreateAccount {
   constructor (
     private readonly createUserRepo: CreateUserRepository,
     private readonly checkEmailExistsRepository: CheckEmailExistsRepository,
-    private readonly passwordHasher: PasswordHasher,
-    private readonly idGenerator: IdGenerator
+    private readonly passwordHasher: PasswordHasher
   ) {}
 
   async exec (params: CreateAccountParams): Promise<IdOrError> {
@@ -29,9 +27,7 @@ export class CreateAccount {
     if (emailAlreadyExists) return { err: 'This email is already in use' }
 
     const password = this.passwordHasher.hash(params.password)
-    const id = this.idGenerator.generate()
-    const createdAt = new Date()
-    await this.createUserRepo.create({ id, name, email, password, createdAt })
+    const id = await this.createUserRepo.create({ name, email, password })
     return { id }
   }
 }

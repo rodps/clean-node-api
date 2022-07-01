@@ -1,5 +1,5 @@
-import { UserModel } from '@/domain/models/user'
+import { CreateAccountParams } from '@/domain/usecases/create-account'
 
 export interface CreateUserRepository {
-  create: (user: UserModel) => Promise<boolean>
+  create: (user: CreateAccountParams) => Promise<string>
 }
