@@ -2,10 +2,11 @@ import { IdGeneratorStub } from '@mocks/domain/ports/id/id-generator-stub'
 import { AddBook, AddBookParams } from './add-book'
 import faker from 'faker'
 import { CheckISBNExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-isbn-exists-repository-spy'
+import { AddBookRepositorySpy } from '@/../tests/mocks/domain/ports/repositories/add-book-repository-spy'
 
 const fakeBook: AddBookParams = {
   title: 'Fake Book',
-  isbn: '0-9667-9884-8',
+  isbn: faker.datatype.string(17),
   pages: 999,
   author: 'any_author',
   publish_date: new Date(),
@@ -19,40 +20,49 @@ const fakeBook: AddBookParams = {
 interface SutTypes {
   idGenerator: IdGeneratorStub
   checkISBNExistsRepositorySpy: CheckISBNExistsRepositorySpy
+  addBookRepositorySpy: AddBookRepositorySpy
   sut: AddBook
 }
 
 const makeSut = (): SutTypes => {
   const idGenerator = new IdGeneratorStub()
   const checkISBNExistsRepositorySpy = new CheckISBNExistsRepositorySpy()
-  const sut = new AddBook(idGenerator, checkISBNExistsRepositorySpy)
+  const addBookRepositorySpy = new AddBookRepositorySpy()
+  const sut = new AddBook(idGenerator, checkISBNExistsRepositorySpy, addBookRepositorySpy)
   return {
     idGenerator,
     checkISBNExistsRepositorySpy,
+    addBookRepositorySpy,
     sut
   }
 }
 
 describe('Add Book', () => {
-  test('should return the id of the added book', () => {
+  test('should return the id of the added book', async () => {
     const { sut, idGenerator } = makeSut()
     idGenerator.id = faker.datatype.uuid()
-    const { id, err } = sut.exec(fakeBook)
+    const { id, err } = await sut.exec(fakeBook)
     expect(id).toBe(idGenerator.id)
     expect(err).toBeFalsy()
   })
 
-  test('should return err if isbn provided is already registered', () => {
+  test('should return err if isbn provided is already registered', async () => {
     const { sut, checkISBNExistsRepositorySpy } = makeSut()
     checkISBNExistsRepositorySpy.result = true
-    const { id, err } = sut.exec(fakeBook)
+    const { id, err } = await sut.exec(fakeBook)
     expect(id).toBeFalsy()
     expect(err).toBe('This isbn is already registered')
   })
 
-  test('should call CheckISBExistsRepository with correct value', () => {
+  test('should call CheckISBExistsRepository with correct value', async () => {
     const { sut, checkISBNExistsRepositorySpy } = makeSut()
-    sut.exec(fakeBook)
+    await sut.exec(fakeBook)
     expect(checkISBNExistsRepositorySpy.isbn).toBe(fakeBook.isbn)
+  })
+
+  test('should call addBookRepository with correct values', async () => {
+    const { sut, addBookRepositorySpy } = makeSut()
+    await sut.exec(fakeBook)
+    expect(addBookRepositorySpy.book).toEqual(fakeBook)
   })
 })

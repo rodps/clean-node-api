@@ -1,5 +1,5 @@
 import { UserModel } from '@/domain/models/user'
-import { LoadUserByEmailRepository } from '@/domain/ports/repositories/load-user-by-email'
+import { LoadUserByEmailRepository } from '@/domain/ports/repositories/load-user-by-email-repository'
 
 export class LoadUserByEmailRepositorySpy implements LoadUserByEmailRepository {
   result: UserModel | null = {

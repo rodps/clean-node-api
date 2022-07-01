@@ -1,6 +1,6 @@
 import { AccessTokenGenerator } from '../ports/crypt/access-token-generator'
 import { PasswordHasher } from '../ports/crypt/password-hasher'
-import { LoadUserByEmailRepository } from '../ports/repositories/load-user-by-email'
+import { LoadUserByEmailRepository } from '../ports/repositories/load-user-by-email-repository'
 
 interface AccessTokenOrError {
   token?: string
