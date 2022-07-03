@@ -14,8 +14,8 @@ export class Authorize {
     private readonly passwordHasher: PasswordHasher
   ) {}
 
-  exec (email: string, password: string): AccessTokenOrError {
-    const user = this.loadUserByEmailRepository.load(email)
+  async exec (email: string, password: string): Promise<AccessTokenOrError> {
+    const user = await this.loadUserByEmailRepository.load(email)
     if (!user) {
       return { err: 'Email not registered' }
     }

@@ -26,7 +26,7 @@ export class AddBook {
   ) {}
 
   async exec (params: AddBookParams): Promise<IdOrError> {
-    if (this.checkIsbnExistsRepository.check(params.isbn)) {
+    if (await this.checkIsbnExistsRepository.check(params.isbn)) {
       return { err: 'This isbn is already registered' }
     }
     const id = await this.addBookRepository.add(params)

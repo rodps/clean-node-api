@@ -3,7 +3,7 @@ import { CheckISBNExistsRepository } from '@/domain/ports/repositories/check-isb
 export class CheckISBNExistsRepositorySpy implements CheckISBNExistsRepository {
   result: boolean = false
   isbn: string
-  check (isbn: string): boolean {
+  async check (isbn: string): Promise<boolean> {
     this.isbn = isbn
     return this.result
   }

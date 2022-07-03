@@ -38,39 +38,39 @@ const fakeUser: UserModel = {
 }
 
 describe('Authorize', () => {
-  test('should return err if email dont exists', () => {
+  test('should return err if email dont exists', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut()
     loadUserByEmailRepositorySpy.result = null
-    const { token, err } = sut.exec('any_email', 'any_password')
+    const { token, err } = await sut.exec('any_email', 'any_password')
     expect(token).toBeFalsy()
     expect(err).toBe('Email not registered')
   })
 
-  test('should call loadUserByEmailRepo with correct values', () => {
+  test('should call loadUserByEmailRepo with correct values', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut()
     const email = faker.internet.email()
-    sut.exec(email, 'any_password')
+    await sut.exec(email, 'any_password')
     expect(loadUserByEmailRepositorySpy.email).toBe(email)
   })
 
-  test('should return err if password is wrong', () => {
+  test('should return err if password is wrong', async () => {
     const { sut, passwordHasherSpy } = makeSut()
     passwordHasherSpy.compareResult = false
-    const { token, err } = sut.exec('any_email', 'incorrect_password')
+    const { token, err } = await sut.exec('any_email', 'incorrect_password')
     expect(token).toBeFalsy()
     expect(err).toBe('Incorrect password')
   })
 
-  test('should call passwordHasher.compare with correct values', () => {
+  test('should call passwordHasher.compare with correct values', async () => {
     const { sut, passwordHasherSpy, loadUserByEmailRepositorySpy } = makeSut()
     loadUserByEmailRepositorySpy.result = fakeUser
     const password = faker.internet.password()
-    sut.exec('any_email', password)
+    await sut.exec('any_email', password)
     expect(passwordHasherSpy.plainText).toBe(password)
     expect(passwordHasherSpy.passwordHash).toBe(loadUserByEmailRepositorySpy.result.password)
   })
 
-  test('should return an access token if email and password are correct', () => {
+  test('should return an access token if email and password are correct', async () => {
     const {
       sut,
       loadUserByEmailRepositorySpy,
@@ -79,12 +79,12 @@ describe('Authorize', () => {
     } = makeSut()
     loadUserByEmailRepositorySpy.result = fakeUser
     passwordHasherSpy.compareResult = true
-    const { token, err } = sut.exec('correct_email', 'correct_password')
+    const { token, err } = await sut.exec('correct_email', 'correct_password')
     expect(err).toBeFalsy()
     expect(token).toBe(accessTokenGeneratorSpy.result)
   })
 
-  test('should call accessTokenGenerator with correct values', () => {
+  test('should call accessTokenGenerator with correct values', async () => {
     const {
       sut,
       loadUserByEmailRepositorySpy,
@@ -97,7 +97,7 @@ describe('Authorize', () => {
       id: loadUserByEmailRepositorySpy.result.id,
       userName: loadUserByEmailRepositorySpy.result.name
     }
-    sut.exec('correct_email', 'correct_password')
+    await sut.exec('correct_email', 'correct_password')
     expect(accessTokenGeneratorSpy.payload).toEqual(payload)
   })
 })

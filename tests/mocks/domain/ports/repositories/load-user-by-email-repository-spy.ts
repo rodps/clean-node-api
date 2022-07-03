@@ -12,7 +12,7 @@ export class LoadUserByEmailRepositorySpy implements LoadUserByEmailRepository {
 
   email: string
 
-  load (email: string): UserModel | null {
+  async load (email: string): Promise<UserModel | null> {
     this.email = email
     return this.result
   }

@@ -1,3 +1,3 @@
 export interface CheckISBNExistsRepository {
-  check: (isbn: string) => boolean
+  check: (isbn: string) => Promise<boolean>
 }
