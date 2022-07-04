@@ -22,4 +22,8 @@ export class HttpResponse {
   static badRequest (body: any): HttpResponse {
     return new HttpResponse(400, body)
   }
+
+  static serverError (): HttpResponse {
+    return new HttpResponse(500)
+  }
 }
