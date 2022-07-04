@@ -1,5 +1,5 @@
 import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
-import { CreateAccountParams } from '@/domain/usecases/create-account'
+import { CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
 import faker from 'faker'
 
 export class CreateUserRepositorySpy implements CreateUserRepository {
