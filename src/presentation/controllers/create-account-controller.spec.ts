@@ -43,4 +43,13 @@ describe('Create account controller', () => {
     expect(response.statusCode).toBe(201)
     expect(response.header?.location).toBe(`/users/${userId}`)
   })
+
+  test('should return serverError if createAccount throws', async () => {
+    const { sut, createAccountSpy } = makeSut()
+    jest.spyOn(createAccountSpy, 'exec').mockImplementation(() => {
+      throw new Error()
+    })
+    const response = await sut.handle(fakeAccount)
+    expect(response.statusCode).toBe(500)
+  })
 })
