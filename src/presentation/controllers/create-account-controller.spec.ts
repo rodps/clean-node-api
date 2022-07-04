@@ -58,4 +58,12 @@ describe('Create account controller', () => {
     await sut.handle(fakeAccount)
     expect(emailValidatorSpy.email).toBe(fakeAccount.email)
   })
+
+  test('should return badRequest if emailValidator returns false', async () => {
+    const { sut, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.result = false
+    const response = await sut.handle(fakeAccount)
+    expect(response.statusCode).toBe(400)
+    expect(response.body.email).toBe('This email is not valid')
+  })
 })
