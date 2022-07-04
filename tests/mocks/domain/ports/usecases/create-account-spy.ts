@@ -2,9 +2,9 @@ import { CreateAccountParams, CreateAccountUseCase, IdOrError } from '@/domain/p
 
 export class CreateAccountSpy implements CreateAccountUseCase {
   params: CreateAccountParams
-  result: Promise<IdOrError> = Promise.resolve({ id: 'any_id' })
+  result: IdOrError = { id: 'any_id' }
   async exec (params: CreateAccountParams): Promise<IdOrError> {
     this.params = params
-    return await this.result
+    return await Promise.resolve(this.result)
   }
 }

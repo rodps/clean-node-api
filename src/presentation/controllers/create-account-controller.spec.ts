@@ -33,4 +33,14 @@ describe('Create account controller', () => {
     await sut.handle(fakeAccount)
     expect(createAccountSpy.params).toEqual(fakeAccount)
   })
+
+  test('should return httpResponse status created if no error occurs', async () => {
+    const { sut, createAccountSpy, emailValidatorSpy } = makeSut()
+    createAccountSpy.result.id = faker.datatype.uuid()
+    emailValidatorSpy.result = true
+    const userId = createAccountSpy.result.id
+    const response = await sut.handle(fakeAccount)
+    expect(response.statusCode).toBe(201)
+    expect(response.header?.location).toBe(`/users/${userId}`)
+  })
 })
