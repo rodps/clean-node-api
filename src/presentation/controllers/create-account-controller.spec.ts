@@ -52,4 +52,10 @@ describe('Create account controller', () => {
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(500)
   })
+
+  test('should call emailValidator with correct values', async () => {
+    const { sut, emailValidatorSpy } = makeSut()
+    await sut.handle(fakeAccount)
+    expect(emailValidatorSpy.email).toBe(fakeAccount.email)
+  })
 })
