@@ -10,6 +10,9 @@ export class CreateAccountController {
 
   async handle (req: CreateAccountParams): Promise<HttpResponse> {
     try {
+      if (!this.emailValidator.isValid(req.email)) {
+        return HttpResponse.badRequest({ email: 'This email is not valid' })
+      }
       const { id, err } = await this.createAccount.exec(req)
       if (id) {
         return HttpResponse.created(`/users/${id}`)
