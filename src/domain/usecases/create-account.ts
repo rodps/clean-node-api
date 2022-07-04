@@ -1,19 +1,9 @@
 import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
 import { PasswordHasher } from '@/domain/ports/crypt/password-hasher'
 import { CheckEmailExistsRepository } from '../ports/repositories/check-email-exists-repository'
+import { CreateAccountParams, CreateAccountUseCase, IdOrError } from '../ports/usecases/create-account-usecase'
 
-export interface CreateAccountParams {
-  name: string
-  email: string
-  password: string
-}
-
-export interface IdOrError {
-  id?: string
-  err?: string
-}
-
-export class CreateAccount {
+export class CreateAccount implements CreateAccountUseCase {
   constructor (
     private readonly createUserRepo: CreateUserRepository,
     private readonly checkEmailExistsRepository: CheckEmailExistsRepository,
