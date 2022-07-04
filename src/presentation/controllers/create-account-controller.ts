@@ -9,7 +9,11 @@ export class CreateAccountController {
   ) {}
 
   async handle (req: CreateAccountParams): Promise<HttpResponse> {
-    await this.createAccount.exec(req)
-    return HttpResponse.ok({})
+    const { id, err } = await this.createAccount.exec(req)
+    if (id) {
+      return HttpResponse.created(`/users/${id}`)
+    } else {
+      return HttpResponse.badRequest(err)
+    }
   }
 }

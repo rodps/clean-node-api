@@ -1,14 +1,22 @@
 export class HttpResponse {
   statusCode: number
-  body: any
-
-  private constructor (statusCode: number, body: any) {
-    this.statusCode = statusCode
-    this.body = body
+  body?: any
+  header?: {
+    location: string
   }
 
-  static ok (body: any): HttpResponse {
+  private constructor (statusCode: number, body?: any, header?: { location: string }) {
+    this.statusCode = statusCode
+    this.body = body
+    this.header = header
+  }
+
+  static ok (body?: any): HttpResponse {
     return new HttpResponse(200, body)
+  }
+
+  static created (location: string, body?: any): HttpResponse {
+    return new HttpResponse(201, body, { location })
   }
 
   static badRequest (body: any): HttpResponse {
