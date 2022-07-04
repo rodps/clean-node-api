@@ -1,6 +1,9 @@
 module.exports = {
   roots: ['<rootDir>/src'],
-  collectCoverageFrom: ['<rootDir>/src/domain/usecases/**/*.ts'],
+  collectCoverageFrom: [
+    '<rootDir>/src/domain/usecases/**/*.ts',
+    '<rootDir>/src/presentation/controllers/**/*.ts'
+  ],
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
   testEnvironment: 'jest-environment-node',
