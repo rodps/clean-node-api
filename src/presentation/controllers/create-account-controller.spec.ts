@@ -3,20 +3,30 @@ import { EmailValidatorSpy } from '@/../tests/mocks/presentation/validators/emai
 import { CreateAccountErrors, CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
 import { CreateAccountController } from './create-account-controller'
 import faker from 'faker'
+import { RequiredFieldsValidatorSpy } from '@/../tests/mocks/presentation/validators/required-fields-validator-spy'
+import { InvalidEmailError } from '../errors/invalid-email-error'
+import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
 
 interface SutTypes {
   createAccountSpy: CreateAccountSpy
   emailValidatorSpy: EmailValidatorSpy
+  requiredFieldsValidatorSpy: RequiredFieldsValidatorSpy<CreateAccountParams>
   sut: CreateAccountController
 }
 
 const makeSut = (): SutTypes => {
   const createAccountSpy = new CreateAccountSpy()
   const emailValidatorSpy = new EmailValidatorSpy()
-  const sut = new CreateAccountController(createAccountSpy, emailValidatorSpy)
+  const requiredFieldsValidatorSpy = new RequiredFieldsValidatorSpy<CreateAccountParams>()
+  const sut = new CreateAccountController(
+    createAccountSpy,
+    emailValidatorSpy,
+    requiredFieldsValidatorSpy
+  )
   return {
     createAccountSpy,
     emailValidatorSpy,
+    requiredFieldsValidatorSpy,
     sut
   }
 }
@@ -58,7 +68,7 @@ describe('Create account controller', () => {
     createAccountSpy.result = { err: CreateAccountErrors.EMAIL_ALREADY_EXISTS }
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(409)
-    expect(response.body).toEqual({ email: 'This email is already in use' })
+    expect(response.body).toEqual(new EmailAlreadyInUseError())
   })
 
   test('should call emailValidator with correct values', async () => {
@@ -72,6 +82,6 @@ describe('Create account controller', () => {
     emailValidatorSpy.result = false
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(400)
-    expect(response.body.email).toBe('This email is not valid')
+    expect(response.body).toEqual(new InvalidEmailError())
   })
 })
