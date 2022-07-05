@@ -1,4 +1,4 @@
-import { CreateAccountParams, CreateAccountUseCase } from '@/domain/ports/usecases/create-account-usecase'
+import { CreateAccountErrors, CreateAccountParams, CreateAccountUseCase } from '@/domain/ports/usecases/create-account-usecase'
 import { EmailValidator } from '../validators/email-validator'
 import { HttpResponse } from './response'
 
@@ -17,7 +17,11 @@ export class CreateAccountController {
       if (id) {
         return HttpResponse.created(`/users/${id}`)
       } else {
-        return HttpResponse.badRequest(err)
+        if (err === CreateAccountErrors.EMAIL_ALREADY_EXISTS) {
+          return HttpResponse.conflict({ email: 'This email is already in use' })
+        } else {
+          return HttpResponse.serverError()
+        }
       }
     } catch {
       return HttpResponse.serverError()

@@ -26,4 +26,8 @@ export class HttpResponse {
   static serverError (): HttpResponse {
     return new HttpResponse(500)
   }
+
+  static conflict (body: any): HttpResponse {
+    return new HttpResponse(409, body)
+  }
 }
