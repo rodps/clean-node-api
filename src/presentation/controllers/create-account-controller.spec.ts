@@ -1,6 +1,6 @@
 import { CreateAccountSpy } from '@/../tests/mocks/domain/ports/usecases/create-account-spy'
 import { EmailValidatorSpy } from '@/../tests/mocks/presentation/validators/email-validator-spy'
-import { CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
+import { CreateAccountErrors, CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
 import { CreateAccountController } from './create-account-controller'
 import faker from 'faker'
 
@@ -51,6 +51,14 @@ describe('Create account controller', () => {
     })
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(500)
+  })
+
+  test('should return conflict if createAccount returns EMAIL_ALREADY_EXISTS', async () => {
+    const { sut, createAccountSpy } = makeSut()
+    createAccountSpy.result = { err: CreateAccountErrors.EMAIL_ALREADY_EXISTS }
+    const response = await sut.handle(fakeAccount)
+    expect(response.statusCode).toBe(409)
+    expect(response.body).toEqual({ email: 'This email is already in use' })
   })
 
   test('should call emailValidator with correct values', async () => {
