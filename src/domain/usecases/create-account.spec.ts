@@ -3,6 +3,7 @@ import { CreateUserRepositorySpy } from '@mocks/domain/ports/repositories/create
 import { PasswordHasherSpy } from '@/../tests/mocks/domain/ports/crypt/password-hasher-spy'
 import { CheckEmailExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-email-exists-repository-spy'
 import faker from 'faker'
+import { CreateAccountErrors } from '../ports/usecases/create-account-usecase'
 
 interface SutTypes {
   createUserRepositorySpy: CreateUserRepositorySpy
@@ -47,7 +48,7 @@ describe('Create account', () => {
     checkEmailExistsRepositorySpy.result = true
     const { id, err } = await sut.exec(fakeUser)
     expect(id).toBeFalsy()
-    expect(err).toBe('This email is already in use')
+    expect(err).toBe(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
   })
 
   test('should call CreateUserRepository with correct values', async () => {

@@ -6,7 +6,11 @@ export interface CreateAccountParams {
 
 export interface IdOrError {
   id?: string
-  err?: string
+  err?: CreateAccountErrors
+}
+
+export enum CreateAccountErrors {
+  EMAIL_ALREADY_EXISTS
 }
 
 export interface CreateAccountUseCase {
