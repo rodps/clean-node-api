@@ -88,8 +88,10 @@ describe('Create account controller', () => {
 
   test('should return badRequest if requiredFieldsValidator returns error', async () => {
     const { sut, requiredFieldsValidatorSpy } = makeSut()
-    const requiredField = 'required_field'
-    requiredFieldsValidatorSpy.result = [requiredField]
+    const requiredFields = Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, () => {
+      return faker.database.column()
+    })
+    requiredFieldsValidatorSpy.result = requiredFields
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual(new RequiredFieldsError(requiredFieldsValidatorSpy.result))
