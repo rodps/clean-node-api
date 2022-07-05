@@ -96,4 +96,10 @@ describe('Create account controller', () => {
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual(new RequiredFieldsError(requiredFieldsValidatorSpy.result))
   })
+
+  test('should call requiredFieldsValidator with correct values', async () => {
+    const { sut, requiredFieldsValidatorSpy } = makeSut()
+    await sut.handle(fakeAccount)
+    expect(requiredFieldsValidatorSpy.input).toEqual(fakeAccount)
+  })
 })
