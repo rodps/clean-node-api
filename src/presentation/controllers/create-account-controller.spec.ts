@@ -6,6 +6,7 @@ import faker from 'faker'
 import { RequiredFieldsValidatorSpy } from '@/../tests/mocks/presentation/validators/required-fields-validator-spy'
 import { InvalidEmailError } from '../errors/invalid-email-error'
 import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
+import { RequiredFieldsError } from '../errors/required-fields-error'
 
 interface SutTypes {
   createAccountSpy: CreateAccountSpy
@@ -83,5 +84,14 @@ describe('Create account controller', () => {
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual(new InvalidEmailError())
+  })
+
+  test('should return badRequest if requiredFieldsValidator returns error', async () => {
+    const { sut, requiredFieldsValidatorSpy } = makeSut()
+    const requiredField = 'required_field'
+    requiredFieldsValidatorSpy.result = [requiredField]
+    const response = await sut.handle(fakeAccount)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new RequiredFieldsError(requiredFieldsValidatorSpy.result))
   })
 })
