@@ -23,10 +23,11 @@ export class CreateAccountController {
       if (id) {
         return HttpResponse.created(`/users/${id}`)
       } else {
-        if (err === CreateAccountErrors.EMAIL_ALREADY_EXISTS) {
-          return HttpResponse.conflict(new EmailAlreadyInUseError())
-        } else {
-          return HttpResponse.serverError()
+        switch (err) {
+          case CreateAccountErrors.EMAIL_ALREADY_EXISTS:
+            return HttpResponse.conflict(new EmailAlreadyInUseError())
+          default:
+            return HttpResponse.serverError()
         }
       }
     } catch {
