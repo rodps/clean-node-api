@@ -1,4 +1,5 @@
 import { CreateAccountErrors, CreateAccountParams, CreateAccountUseCase } from '@/domain/ports/usecases/create-account-usecase'
+import { fold } from 'fp-ts/lib/Either'
 import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
 import { InvalidEmailError } from '../errors/invalid-email-error'
 import { RequiredFieldsError } from '../errors/required-fields-error'
@@ -19,10 +20,7 @@ export class CreateAccountController {
       const clientError = this.validate(req)
       if (clientError) return HttpResponse.badRequest(clientError)
 
-      const { id, err } = await this.createAccount.exec(req)
-      if (id) {
-        return HttpResponse.created(`/users/${id}`)
-      } else {
+      const onError = (err: CreateAccountErrors): HttpResponse => {
         switch (err) {
           case CreateAccountErrors.EMAIL_ALREADY_EXISTS:
             return HttpResponse.conflict(new EmailAlreadyInUseError())
@@ -30,6 +28,12 @@ export class CreateAccountController {
             return HttpResponse.serverError()
         }
       }
+
+      const onSuccess = (id: string): HttpResponse => {
+        return HttpResponse.created(`/users/${id}`)
+      }
+
+      return fold(onError, onSuccess)(await this.createAccount.exec(req))
     } catch {
       return HttpResponse.serverError()
     }

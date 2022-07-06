@@ -7,6 +7,7 @@ import { RequiredFieldsValidatorSpy } from '@/../tests/mocks/presentation/valida
 import { InvalidEmailError } from '../errors/invalid-email-error'
 import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
 import { RequiredFieldsError } from '../errors/required-fields-error'
+import { left, right } from 'fp-ts/lib/Either'
 
 interface SutTypes {
   createAccountSpy: CreateAccountSpy
@@ -47,9 +48,9 @@ describe('Create account controller', () => {
 
   test('should return httpResponse status created if no error occurs', async () => {
     const { sut, createAccountSpy, emailValidatorSpy } = makeSut()
-    createAccountSpy.result.id = faker.datatype.uuid()
+    const userId = faker.datatype.uuid()
+    createAccountSpy.result = right(userId)
     emailValidatorSpy.result = true
-    const userId = createAccountSpy.result.id
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(201)
     expect(response.header?.location).toBe(`/users/${userId}`)
@@ -66,7 +67,7 @@ describe('Create account controller', () => {
 
   test('should return conflict if createAccount returns EMAIL_ALREADY_EXISTS', async () => {
     const { sut, createAccountSpy } = makeSut()
-    createAccountSpy.result = { err: CreateAccountErrors.EMAIL_ALREADY_EXISTS }
+    createAccountSpy.result = left(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(409)
     expect(response.body).toEqual(new EmailAlreadyInUseError())

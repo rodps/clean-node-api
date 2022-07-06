@@ -13,5 +13,6 @@ module.exports = {
   moduleNameMapper: {
     '@mocks/(.*)': '<rootDir>/tests/mocks/$1',
     '@/(.*)': '<rootDir>/src/$1'
-  }
+  },
+  setupFilesAfterEnv: ['@relmify/jest-fp-ts']
 }

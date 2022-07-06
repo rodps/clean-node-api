@@ -4,6 +4,7 @@ import { PasswordHasherSpy } from '@/../tests/mocks/domain/ports/crypt/password-
 import { CheckEmailExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-email-exists-repository-spy'
 import faker from 'faker'
 import { CreateAccountErrors } from '../ports/usecases/create-account-usecase'
+import '@relmify/jest-fp-ts'
 
 interface SutTypes {
   createUserRepositorySpy: CreateUserRepositorySpy
@@ -38,17 +39,15 @@ const fakeUser = {
 describe('Create account', () => {
   test('should return id of created user', async () => {
     const { sut, createUserRepositorySpy } = makeSut()
-    const { id, err } = await sut.exec(fakeUser)
-    expect(id).toBe(createUserRepositorySpy.id)
-    expect(err).toBeFalsy()
+    const result = await sut.exec(fakeUser)
+    expect(result).toEqualRight(createUserRepositorySpy.id)
   })
 
-  test('should return err if email provided is already in use', async () => {
+  test('should return error if email provided is already in use', async () => {
     const { sut, checkEmailExistsRepositorySpy } = makeSut()
     checkEmailExistsRepositorySpy.result = true
-    const { id, err } = await sut.exec(fakeUser)
-    expect(id).toBeFalsy()
-    expect(err).toBe(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
+    const result = await sut.exec(fakeUser)
+    expect(result).toEqualLeft(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
   })
 
   test('should call CreateUserRepository with correct values', async () => {

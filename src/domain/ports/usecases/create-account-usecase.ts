@@ -1,12 +1,9 @@
+import { Either } from 'fp-ts/lib/Either'
+
 export interface CreateAccountParams {
   name: string
   email: string
   password: string
-}
-
-export interface IdOrError {
-  id?: string
-  err?: CreateAccountErrors
 }
 
 export enum CreateAccountErrors {
@@ -14,5 +11,5 @@ export enum CreateAccountErrors {
 }
 
 export interface CreateAccountUseCase {
-  exec: (params: CreateAccountParams) => Promise<IdOrError>
+  exec: (params: CreateAccountParams) => Promise<Either<CreateAccountErrors, string>>
 }
