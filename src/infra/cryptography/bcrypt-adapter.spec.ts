@@ -18,11 +18,20 @@ const makeSut = (): BcryptAdapter => {
 }
 
 describe('Bcrypt adapter', () => {
-  test('should call hash with correct values', async () => {
-    const sut = makeSut()
-    const hashSpy = jest.spyOn(bcrypt, 'hash')
-    const password = faker.internet.password()
-    await sut.hash(password)
-    expect(hashSpy).toHaveBeenCalledWith(password, salt)
+  describe('hash', () => {
+    test('should call hash with correct values', async () => {
+      const sut = makeSut()
+      const hashSpy = jest.spyOn(bcrypt, 'hash')
+      const password = faker.internet.password()
+      await sut.hash(password)
+      expect(hashSpy).toHaveBeenCalledWith(password, salt)
+    })
+
+    test('should return hash on success', async () => {
+      const sut = makeSut()
+      const password = faker.internet.password()
+      const result = await sut.hash(password)
+      expect(result).toBe('hash')
+    })
   })
 })
