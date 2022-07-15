@@ -32,6 +32,7 @@ const makeSut = (): SutTypes => {
 const fakeUser: UserModel = {
   id: faker.datatype.uuid(),
   createdAt: faker.date.past(),
+  updatedAt: null,
   name: faker.internet.userName(),
   email: faker.internet.email(),
   password: faker.internet.password()

@@ -1,5 +1,5 @@
 export interface Model {
   id: string
   createdAt: Date
-  updatedAt?: Date
+  updatedAt: Date | null
 }
