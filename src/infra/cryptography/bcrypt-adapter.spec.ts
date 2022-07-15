@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { BcryptAdapter } from './bcrypt-adapter'
 import faker from 'faker'
 import bcrypt from 'bcrypt'
@@ -32,6 +33,16 @@ describe('Bcrypt adapter', () => {
       const password = faker.internet.password()
       const result = await sut.hash(password)
       expect(result).toBe('hash')
+    })
+
+    test('should throw if bcrypt throws', async () => {
+      const sut = makeSut()
+      const password = faker.internet.password()
+      const hashSpy = jest.spyOn(bcrypt, 'hash')
+      hashSpy.mockImplementation(() => {
+        throw new Error()
+      })
+      expect(sut.hash(password)).rejects.toThrow()
     })
   })
 })
