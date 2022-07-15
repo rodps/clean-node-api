@@ -48,7 +48,7 @@ describe('User repository', () => {
         name: faker.internet.userName(),
         password: faker.internet.password()
       }
-      prismaMock.user.create.mockResolvedValue(fakeUser)
+      prismaMock.user.findFirst.mockResolvedValue(fakeUser)
       const result = await sut.checkEmail(email)
       expect(result).toBe(true)
     })
