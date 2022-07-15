@@ -52,5 +52,13 @@ describe('User repository', () => {
       const result = await sut.checkEmail(email)
       expect(result).toBe(true)
     })
+
+    test('should return false if no user with the same email was found', async () => {
+      const { sut } = makeSut()
+      const email = faker.internet.email()
+      prismaMock.user.findFirst.mockResolvedValue(null)
+      const result = await sut.checkEmail(email)
+      expect(result).toBe(false)
+    })
   })
 })
