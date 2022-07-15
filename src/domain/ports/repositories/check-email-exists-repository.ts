@@ -1,3 +1,3 @@
 export interface CheckEmailExistsRepository {
-  check: (email: string) => Promise<Boolean>
+  checkEmail: (email: string) => Promise<Boolean>
 }

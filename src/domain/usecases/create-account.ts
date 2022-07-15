@@ -14,7 +14,7 @@ export class CreateAccount implements CreateAccountUseCase {
   async exec (params: CreateAccountParams): Promise<Either<CreateAccountErrors, string>> {
     const { name, email } = params
 
-    const emailAlreadyExists = await this.checkEmailExistsRepository.check(email)
+    const emailAlreadyExists = await this.checkEmailExistsRepository.checkEmail(email)
     if (emailAlreadyExists) return left(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
 
     const password = this.passwordHasher.hash(params.password)
