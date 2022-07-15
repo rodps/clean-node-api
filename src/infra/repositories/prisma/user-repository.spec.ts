@@ -35,4 +35,22 @@ describe('User repository', () => {
       expect(result).toBe(fakeUser.id)
     })
   })
+
+  describe('Check email already exists', () => {
+    test('should return true if an user already has the same email', async () => {
+      const { sut } = makeSut()
+      const email = faker.internet.email()
+      const fakeUser: User = {
+        email,
+        id: faker.datatype.uuid(),
+        createdAt: new Date(),
+        updatedAt: null,
+        name: faker.internet.userName(),
+        password: faker.internet.password()
+      }
+      prismaMock.user.create.mockResolvedValue(fakeUser)
+      const result = await sut.checkEmail(email)
+      expect(result).toBe(true)
+    })
+  })
 })
