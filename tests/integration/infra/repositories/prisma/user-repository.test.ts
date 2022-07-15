@@ -11,6 +11,7 @@ const prisma = new PrismaClient()
 describe('User repository integration', () => {
   afterAll(async () => {
     await prisma.user.deleteMany()
+    await prisma.$disconnect()
   })
 
   test('should create a new user', async () => {
