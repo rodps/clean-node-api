@@ -4,6 +4,7 @@ import { LoadUserByEmailRepository } from '@/domain/ports/repositories/load-user
 export class LoadUserByEmailRepositorySpy implements LoadUserByEmailRepository {
   result: UserModel | null = {
     createdAt: new Date(),
+    updatedAt: null,
     email: 'any_email',
     id: 'any_id',
     name: 'any_name',
