@@ -67,7 +67,7 @@ describe('Create account', () => {
 
   test('should call CreateUserRepository with hashed password', async () => {
     const { sut, createUserRepositorySpy, passwordHasherSpy } = makeSut()
-    const hashedPassword = passwordHasherSpy.hash(fakeUser.password)
+    const hashedPassword = await passwordHasherSpy.hash(fakeUser.password)
     await sut.exec(fakeUser)
     expect(createUserRepositorySpy.user.password).toBe(hashedPassword)
   })

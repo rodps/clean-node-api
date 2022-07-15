@@ -5,11 +5,11 @@ export class PasswordHasherSpy implements PasswordHasher {
   compareResult: boolean = true
   plainText: string
   passwordHash: string
-  hash (password: string): string {
+  async hash (password: string): Promise<string> {
     return this.hashResult
   }
 
-  compare (plainText: string, passwordHash: string): boolean {
+  async compare (plainText: string, passwordHash: string): Promise<boolean> {
     this.plainText = plainText
     this.passwordHash = passwordHash
     return this.compareResult

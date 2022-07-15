@@ -17,7 +17,7 @@ export class CreateAccount implements CreateAccountUseCase {
     const emailAlreadyExists = await this.checkEmailExistsRepository.checkEmail(email)
     if (emailAlreadyExists) return left(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
 
-    const password = this.passwordHasher.hash(params.password)
+    const password = await this.passwordHasher.hash(params.password)
     const id = await this.createUserRepo.create({ name, email, password })
     return right(id)
   }

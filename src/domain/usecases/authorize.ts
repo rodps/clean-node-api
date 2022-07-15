@@ -19,7 +19,7 @@ export class Authorize {
     if (!user) {
       return { err: 'Email not registered' }
     }
-    if (!this.passwordHasher.compare(password, user.password)) {
+    if (!await this.passwordHasher.compare(password, user.password)) {
       return { err: 'Incorrect password' }
     }
     return {
