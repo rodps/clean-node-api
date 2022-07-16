@@ -12,6 +12,6 @@ export class BcryptAdapter implements PasswordHasher {
   }
 
   async compare (plainText: string, hash: string): Promise<boolean> {
-    return true
+    return await bcrypt.compare(plainText, hash)
   }
 }
