@@ -39,7 +39,7 @@ describe('Bcrypt adapter', () => {
       const sut = makeSut()
       const password = faker.internet.password()
       const hashSpy = jest.spyOn(bcrypt, 'hash')
-      hashSpy.mockImplementation(() => {
+      hashSpy.mockImplementationOnce(() => {
         throw new Error()
       })
       expect(sut.hash(password)).rejects.toThrow()
@@ -54,6 +54,24 @@ describe('Bcrypt adapter', () => {
       const hashed = 'hashed_text'
       await sut.compare(plainText, hashed)
       expect(compareSpy).toHaveBeenCalledWith(plainText, hashed)
+    })
+
+    test('should return true on success', async () => {
+      const sut = makeSut()
+      const plainText = 'any_text'
+      const hashed = 'hashed_text'
+      const result = await sut.compare(plainText, hashed)
+      expect(result).toBe(true)
+    })
+
+    test('should return false on failure', async () => {
+      const sut = makeSut()
+      const compareSpy = jest.spyOn(bcrypt, 'compare')
+      compareSpy.mockImplementationOnce(() => false)
+      const plainText = 'any_text'
+      const hashed = 'hashed_text'
+      const result = await sut.compare(plainText, hashed)
+      expect(result).toBe(false)
     })
   })
 })
