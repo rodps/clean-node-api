@@ -20,25 +20,22 @@ const makeSut = (): BcryptAdapter => {
 
 describe('Bcrypt adapter', () => {
   describe('hash', () => {
+    const hashSpy = jest.spyOn(bcrypt, 'hash')
+    const password = faker.internet.password()
     test('should call hash with correct values', async () => {
       const sut = makeSut()
-      const hashSpy = jest.spyOn(bcrypt, 'hash')
-      const password = faker.internet.password()
       await sut.hash(password)
       expect(hashSpy).toHaveBeenCalledWith(password, salt)
     })
 
     test('should return hash on success', async () => {
       const sut = makeSut()
-      const password = faker.internet.password()
       const result = await sut.hash(password)
       expect(result).toBe('hash')
     })
 
-    test('should throw if bcrypt throws', async () => {
+    test('should throw if bcrypt hash throws', async () => {
       const sut = makeSut()
-      const password = faker.internet.password()
-      const hashSpy = jest.spyOn(bcrypt, 'hash')
       hashSpy.mockImplementationOnce(() => {
         throw new Error()
       })
@@ -47,31 +44,35 @@ describe('Bcrypt adapter', () => {
   })
 
   describe('compare', () => {
+    const compareSpy = jest.spyOn(bcrypt, 'compare')
+    const plainText = 'any_text'
+    const hashed = 'hashed_text'
     test('should call compare with correct values', async () => {
       const sut = makeSut()
-      const compareSpy = jest.spyOn(bcrypt, 'compare')
-      const plainText = 'any_text'
-      const hashed = 'hashed_text'
       await sut.compare(plainText, hashed)
       expect(compareSpy).toHaveBeenCalledWith(plainText, hashed)
     })
 
     test('should return true on success', async () => {
       const sut = makeSut()
-      const plainText = 'any_text'
-      const hashed = 'hashed_text'
       const result = await sut.compare(plainText, hashed)
       expect(result).toBe(true)
     })
 
     test('should return false on failure', async () => {
       const sut = makeSut()
-      const compareSpy = jest.spyOn(bcrypt, 'compare')
       compareSpy.mockImplementationOnce(() => false)
-      const plainText = 'any_text'
-      const hashed = 'hashed_text'
       const result = await sut.compare(plainText, hashed)
       expect(result).toBe(false)
+    })
+
+    test('should throw if bcrypt compare throws', async () => {
+      const sut = makeSut()
+      const compareSpy = jest.spyOn(bcrypt, 'compare')
+      compareSpy.mockImplementationOnce(() => {
+        throw new Error()
+      })
+      expect(sut.compare(plainText, hashed)).rejects.toThrow()
     })
   })
 })
