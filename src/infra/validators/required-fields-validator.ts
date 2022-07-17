@@ -5,13 +5,13 @@ export class RequiredFieldsValidatorImpl<T> implements RequiredFieldsValidator<T
 
   validate (input: T): string[] {
     const keys = Object.keys(input)
-    let missing: string[] = []
+    const missing: string[] = []
     this.requiredFields.forEach(required => {
       if (!(keys.includes(required))) {
-        missing = [...missing, required]
+        missing.push(required)
       } else {
-        if (!input[required]) {
-          missing = [...missing, required]
+        if (input[required] === '') {
+          missing.push(required)
         }
       }
     })
