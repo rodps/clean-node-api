@@ -1,7 +1,7 @@
-import { ClientError } from '../protocols/client-error'
+import { ValidationError } from '../protocols/validator'
 
-export class InvalidEmailError extends ClientError {
-  constructor () {
-    super({ email: 'This email is invalid' })
+export class InvalidEmailError extends ValidationError {
+  constructor (field: string) {
+    super(field, 'Invalid email')
   }
 }

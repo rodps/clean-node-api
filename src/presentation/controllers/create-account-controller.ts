@@ -1,29 +1,24 @@
 import { CreateAccountErrors, CreateAccountParams, CreateAccountUseCase } from '@/domain/ports/usecases/create-account-usecase'
 import { fold } from 'fp-ts/lib/Either'
 import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
-import { InvalidEmailError } from '../errors/invalid-email-error'
-import { RequiredFieldsError } from '../errors/required-fields-error'
-import { ClientError } from '../protocols/client-error'
 import { HttpResponse } from '../protocols/http-response'
-import { EmailValidator } from '../validators/email-validator'
-import { RequiredFieldsValidator } from '../validators/required-fields-validator'
+import { Validator } from '../protocols/validator'
 
 export class CreateAccountController {
   constructor (
     private readonly createAccount: CreateAccountUseCase,
-    private readonly emailValidator: EmailValidator,
-    private readonly requiredFieldsValidator: RequiredFieldsValidator<CreateAccountParams>
+    private readonly validator: Validator<CreateAccountParams>
   ) {}
 
   async handle (req: CreateAccountParams): Promise<HttpResponse> {
     try {
-      const clientError = this.validate(req)
-      if (clientError) return HttpResponse.badRequest(clientError)
+      const validationError = this.validator.validate(req)
+      if (validationError) return HttpResponse.badRequest(validationError)
 
       const onError = (err: CreateAccountErrors): HttpResponse => {
         switch (err) {
           case CreateAccountErrors.EMAIL_ALREADY_EXISTS:
-            return HttpResponse.conflict(new EmailAlreadyInUseError())
+            return HttpResponse.conflict([new EmailAlreadyInUseError('email')])
           default:
             return HttpResponse.serverError()
         }
@@ -36,16 +31,6 @@ export class CreateAccountController {
       return fold(onError, onSuccess)(await this.createAccount.exec(req))
     } catch {
       return HttpResponse.serverError()
-    }
-  }
-
-  private validate (req: CreateAccountParams): ClientError | undefined {
-    const requiredFields = this.requiredFieldsValidator.validate(req)
-    if (requiredFields.length > 0) {
-      return new RequiredFieldsError(requiredFields)
-    }
-    if (!this.emailValidator.isValid(req.email)) {
-      return new InvalidEmailError()
     }
   }
 }

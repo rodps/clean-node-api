@@ -1,34 +1,29 @@
 import { CreateAccountSpy } from '@/../tests/mocks/domain/ports/usecases/create-account-spy'
-import { EmailValidatorSpy } from '@/../tests/mocks/presentation/validators/email-validator-spy'
 import { CreateAccountErrors, CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
 import { CreateAccountController } from './create-account-controller'
 import faker from 'faker'
-import { RequiredFieldsValidatorSpy } from '@/../tests/mocks/presentation/validators/required-fields-validator-spy'
-import { InvalidEmailError } from '../errors/invalid-email-error'
 import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
-import { RequiredFieldsError } from '../errors/required-fields-error'
 import { left, right } from 'fp-ts/lib/Either'
+import { ValidatorSpy } from '@mocks/presentation/validator-spy'
+import { HttpResponse } from '../protocols/http-response'
+import { ValidationError } from '../protocols/validator'
 
 interface SutTypes {
   createAccountSpy: CreateAccountSpy
-  emailValidatorSpy: EmailValidatorSpy
-  requiredFieldsValidatorSpy: RequiredFieldsValidatorSpy<CreateAccountParams>
+  validatorSpy: ValidatorSpy
   sut: CreateAccountController
 }
 
 const makeSut = (): SutTypes => {
   const createAccountSpy = new CreateAccountSpy()
-  const emailValidatorSpy = new EmailValidatorSpy()
-  const requiredFieldsValidatorSpy = new RequiredFieldsValidatorSpy<CreateAccountParams>()
+  const validatorSpy = new ValidatorSpy()
   const sut = new CreateAccountController(
     createAccountSpy,
-    emailValidatorSpy,
-    requiredFieldsValidatorSpy
+    validatorSpy
   )
   return {
     createAccountSpy,
-    emailValidatorSpy,
-    requiredFieldsValidatorSpy,
+    validatorSpy,
     sut
   }
 }
@@ -47,10 +42,9 @@ describe('Create account controller', () => {
   })
 
   test('should return httpResponse status created if no error occurs', async () => {
-    const { sut, createAccountSpy, emailValidatorSpy } = makeSut()
+    const { sut, createAccountSpy } = makeSut()
     const userId = faker.datatype.uuid()
     createAccountSpy.result = right(userId)
-    emailValidatorSpy.result = true
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(201)
     expect(response.header?.location).toBe(`/users/${userId}`)
@@ -69,38 +63,19 @@ describe('Create account controller', () => {
     const { sut, createAccountSpy } = makeSut()
     createAccountSpy.result = left(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
     const response = await sut.handle(fakeAccount)
-    expect(response.statusCode).toBe(409)
-    expect(response.body).toEqual(new EmailAlreadyInUseError())
+    expect(response).toEqual(HttpResponse.conflict([new EmailAlreadyInUseError('email')]))
   })
 
-  test('should call emailValidator with correct values', async () => {
-    const { sut, emailValidatorSpy } = makeSut()
-    await sut.handle(fakeAccount)
-    expect(emailValidatorSpy.email).toBe(fakeAccount.email)
-  })
-
-  test('should return badRequest if emailValidator returns false', async () => {
-    const { sut, emailValidatorSpy } = makeSut()
-    emailValidatorSpy.result = false
+  test('should return badRequest if validator returns error', async () => {
+    const { sut, validatorSpy } = makeSut()
+    validatorSpy.result = [new ValidationError('any_field', 'any_message')]
     const response = await sut.handle(fakeAccount)
-    expect(response.statusCode).toBe(400)
-    expect(response.body).toEqual(new InvalidEmailError())
+    expect(response).toEqual(HttpResponse.badRequest(validatorSpy.result))
   })
 
-  test('should return badRequest if requiredFieldsValidator returns error', async () => {
-    const { sut, requiredFieldsValidatorSpy } = makeSut()
-    const requiredFields = Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, () => {
-      return faker.database.column()
-    })
-    requiredFieldsValidatorSpy.result = requiredFields
-    const response = await sut.handle(fakeAccount)
-    expect(response.statusCode).toBe(400)
-    expect(response.body).toEqual(new RequiredFieldsError(requiredFieldsValidatorSpy.result))
-  })
-
-  test('should call requiredFieldsValidator with correct values', async () => {
-    const { sut, requiredFieldsValidatorSpy } = makeSut()
+  test('should call validator with correct values', async () => {
+    const { sut, validatorSpy } = makeSut()
     await sut.handle(fakeAccount)
-    expect(requiredFieldsValidatorSpy.input).toEqual(fakeAccount)
+    expect(validatorSpy.params).toBe(fakeAccount)
   })
 })

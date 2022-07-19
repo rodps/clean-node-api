@@ -1,7 +1,7 @@
-import { ClientError } from '../protocols/client-error'
+import { ValidationError } from '../protocols/validator'
 
-export class EmailAlreadyInUseError extends ClientError {
-  constructor () {
-    super({ email: 'This email is already in use' })
+export class EmailAlreadyInUseError extends ValidationError {
+  constructor (field: string) {
+    super(field, 'This email is already in use')
   }
 }
