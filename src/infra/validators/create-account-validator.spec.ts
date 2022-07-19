@@ -1,8 +1,8 @@
 import { CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
-import { InvalidEmailError } from '../errors/invalid-email-error'
-import { RequiredFieldError } from '../errors/required-field-error'
+import { InvalidEmailError } from '../../presentation/errors/invalid-email-error'
+import { RequiredFieldError } from '../../presentation/errors/required-field-error'
 import { CreateAccountValidator } from './create-account-validator'
-import { MinimumLengthError } from '../errors/minimum-lenght-error'
+import { MinimumLengthError } from '../../presentation/errors/minimum-lenght-error'
 import faker from 'faker'
 
 describe('Create account validator', () => {

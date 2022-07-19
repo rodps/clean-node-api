@@ -9,8 +9,8 @@
     "test:unit": "npm test -- --noStackTrace ./src",
     "test:ci": "npm test -- --coverage",
     "test:integration": "dotenv -e .env.test -- npx prisma migrate deploy && npm test ./tests/integration",
-    "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
-    "docker:down": "docker-compose -f docker-compose.dev.yml down",
+    "db:up": "docker-compose -f docker-compose.dev.yml up -d",
+    "db:down": "docker-compose -f docker-compose.dev.yml down",
     "migrate": "dotenv -e .env.dev -- npx prisma migrate dev",
     "dev": "dotenv -e .env.dev -- npx ts-node ./src/main/server.ts",
     "prepare": "husky install"

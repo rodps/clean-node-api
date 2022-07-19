@@ -1,5 +1,5 @@
 import { CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
-import { ValidationError, Validator } from '../protocols/validator'
+import { ValidationError, Validator } from '../../presentation/protocols/validator'
 import Joi from 'joi'
 
 export class CreateAccountValidator implements Validator<CreateAccountParams> {
