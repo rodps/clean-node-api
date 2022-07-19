@@ -1,8 +1,7 @@
 module.exports = {
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   collectCoverageFrom: [
-    '<rootDir>/src/domain/usecases/**/*.ts',
-    '<rootDir>/src/presentation/controllers/**/*.ts'
+    '<rootDir>/src/**/*.ts'
   ],
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
