@@ -11,5 +11,8 @@
             "@/*": ["*"],
             "@mocks/*": ["../tests/mocks/*"]
         }
+    },
+    "ts-node": {
+        "require": ["tsconfig-paths/register"]
     }
 }

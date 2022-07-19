@@ -1,17 +1,14 @@
 import { CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
 import { UserRepository } from '@/infra/repositories/prisma/user-repository'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@/infra/repositories/prisma/client'
 import faker from 'faker'
 import dotenv from 'dotenv'
 import path from 'path'
 dotenv.config({ path: path.resolve(process.cwd(), '.env.test') })
 
-const prisma = new PrismaClient()
-
 describe('User repository integration', () => {
   afterAll(async () => {
     await prisma.user.deleteMany()
-    await prisma.$disconnect()
   })
 
   test('should create a new user', async () => {

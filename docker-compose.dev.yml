@@ -3,10 +3,12 @@ version: '3.1'
 services:
   db:
     image: postgres:13
-    container_name: postgres-development-database
+    container_name: postgres-dev-db
     restart: always
     ports:
       - '5432:5432'
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     environment:
-      POSTGRES_PASSWORD: development
-      POSTGRES_DB: development
+      POSTGRES_PASSWORD: postgres

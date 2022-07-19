@@ -25,7 +25,7 @@ export class CreateAccountController {
       }
 
       const onSuccess = (id: string): HttpResponse => {
-        return HttpResponse.created(`/users/${id}`)
+        return HttpResponse.created(`${process.env.BASE_URL ?? ''}/users/${id}`)
       }
 
       return fold(onError, onSuccess)(await this.createAccount.exec(req))
