@@ -27,8 +27,9 @@ export class HttpResponse {
     this.header = header
   }
 
-  static ok (body?: ResponseBody): HttpResponse {
-    return new HttpResponse(200, body)
+  static ok (data?: any): HttpResponse {
+    const success = true
+    return new HttpResponse(200, { success, data })
   }
 
   static created (location: string, data?: any): HttpResponse {
