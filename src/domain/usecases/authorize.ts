@@ -12,7 +12,7 @@ export class Authorize implements AuthorizeUseCase {
 
   async exec (params: AuthorizeParams): Promise<AccessTokenOrError> {
     const { email, password } = params
-    const user = await this.loadUserByEmailRepository.load(email)
+    const user = await this.loadUserByEmailRepository.loadByEmail(email)
     if (!user) {
       return { err: AuthorizeErrors.EMAIL_NOT_REGISTERED }
     }
