@@ -1,9 +1,6 @@
 import app from '@/main/config'
 import prisma from '@/infra/repositories/prisma/client'
 import request from 'supertest'
-import dotenv from 'dotenv'
-import path from 'path'
-dotenv.config({ path: path.resolve(process.cwd(), '.env.test') })
 
 describe('Auth routes test', () => {
   afterEach(async () => {

@@ -2,9 +2,6 @@ import { CreateAccountParams } from '@/domain/ports/usecases/create-account-usec
 import { UserRepository } from '@/infra/repositories/prisma/user-repository'
 import prisma from '@/infra/repositories/prisma/client'
 import faker from 'faker'
-import dotenv from 'dotenv'
-import path from 'path'
-dotenv.config({ path: path.resolve(process.cwd(), '.env.test') })
 
 describe('User repository integration', () => {
   afterAll(async () => {
