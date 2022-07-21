@@ -35,4 +35,10 @@ describe('Authenticate controller', () => {
     const result = await sut.handle({ email: 'any_email', password: 'any_password' })
     expect(result).toEqual(HttpResponse.badRequest(validatorSpy.result))
   })
+
+  test('should call authenticate with correct values', async () => {
+    const { sut, authenticateSpy } = makeSut()
+    await sut.handle({ email: 'any_email', password: 'any_password' })
+    expect(authenticateSpy.params).toEqual({ email: 'any_email', password: 'any_password' })
+  })
 })
