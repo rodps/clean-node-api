@@ -79,5 +79,12 @@ describe('Auth routes test', () => {
         })
         .expect(401)
     })
+
+    test('should return 400', async () => {
+      await request(app)
+        .post('/signin')
+        .send({})
+        .expect(400)
+    })
   })
 })
