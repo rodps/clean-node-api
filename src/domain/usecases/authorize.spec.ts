@@ -40,7 +40,13 @@ describe('Authorize use case', () => {
   test('should return null if TokenVerifier returns null', async () => {
     const { tokenVerifierSpy, sut } = makeSut()
     tokenVerifierSpy.result = null
-    const payload = await sut.exec('any_token')
-    expect(payload).toBe(null)
+    const id = await sut.exec('any_token')
+    expect(id).toBe(null)
+  })
+
+  test('should return payload id if TokenVerifier returns payload', async () => {
+    const { tokenVerifierSpy, sut } = makeSut()
+    const id = await sut.exec('any_token')
+    expect(id).toBe(tokenVerifierSpy.result?.id)
   })
 })
