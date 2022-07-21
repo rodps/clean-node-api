@@ -9,7 +9,8 @@ export class AuthenticateController {
   ) {}
 
   async handle (params: AuthenticateParams): Promise<HttpResponse> {
-    this.validator.validate(params)
+    const validationError = this.validator.validate(params)
+    if (validationError) return HttpResponse.badRequest(validationError)
     return HttpResponse.ok()
   }
 }
