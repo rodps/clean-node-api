@@ -48,6 +48,31 @@ describe('Auth routes test', () => {
         })
         .expect(409)
     })
+
+    test('should return 400', async () => {
+      await request(app)
+        .post('/signup')
+        .send({})
+        .expect(400)
+
+      await request(app)
+        .post('/signup')
+        .send({
+          name: 'Rodrigo',
+          email: 'invalid_email',
+          password: '123456789'
+        })
+        .expect(400)
+
+      await request(app)
+        .post('/signup')
+        .send({
+          name: 'Rodrigo',
+          email: 'rodrigo@gmail.com',
+          password: '123'
+        })
+        .expect(400)
+    })
   })
 
   describe('POST /signin', () => {
