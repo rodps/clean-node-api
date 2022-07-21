@@ -16,7 +16,7 @@ export class AuthenticateController {
 
     const { accessToken, err } = await this.authenticate.exec(params)
     if (accessToken) {
-      return HttpResponse.ok()
+      return HttpResponse.ok({ accessToken })
     } else {
       switch (err) {
         case AuthenticateErrors.EMAIL_NOT_REGISTERED:
