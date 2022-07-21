@@ -1,23 +1,23 @@
 import { AccessTokenGeneratorSpy } from '@/../tests/mocks/domain/ports/crypt/access-token-generator-spy'
 import { PasswordHasherSpy } from '@/../tests/mocks/domain/ports/crypt/password-hasher-spy'
 import { LoadUserByEmailRepositorySpy } from '@mocks/domain/ports/repositories/load-user-by-email-repository-spy'
-import { Authorize } from './authorize'
+import { Authenticate } from './authenticate'
 import faker from 'faker'
 import { UserModel } from '../models/user'
-import { AuthorizeErrors } from '../ports/usecases/authorize-usecase'
+import { AuthenticateErrors } from '../ports/usecases/authenticate-usecase'
 
 interface SutTypes {
   loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy
   accessTokenGeneratorSpy: AccessTokenGeneratorSpy
   passwordHasherSpy: PasswordHasherSpy
-  sut: Authorize
+  sut: Authenticate
 }
 
 const makeSut = (): SutTypes => {
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
   const accessTokenGeneratorSpy = new AccessTokenGeneratorSpy()
   const passwordHasherSpy = new PasswordHasherSpy()
-  const sut = new Authorize(
+  const sut = new Authenticate(
     loadUserByEmailRepositorySpy,
     accessTokenGeneratorSpy,
     passwordHasherSpy
@@ -39,13 +39,13 @@ const fakeUser: UserModel = {
   password: faker.internet.password()
 }
 
-describe('Authorize', () => {
+describe('Authenticate', () => {
   test('should return err if email dont exists', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut()
     loadUserByEmailRepositorySpy.result = null
     const { accessToken, err } = await sut.exec({ email: 'any_email', password: 'any_password' })
     expect(accessToken).toBeFalsy()
-    expect(err).toBe(AuthorizeErrors.EMAIL_NOT_REGISTERED)
+    expect(err).toBe(AuthenticateErrors.EMAIL_NOT_REGISTERED)
   })
 
   test('should call loadUserByEmailRepo with correct values', async () => {
@@ -60,7 +60,7 @@ describe('Authorize', () => {
     passwordHasherSpy.compareResult = false
     const { accessToken, err } = await sut.exec({ email: 'any_email', password: 'incorrect_password' })
     expect(accessToken).toBeFalsy()
-    expect(err).toBe(AuthorizeErrors.INCORRECT_PASSWORD)
+    expect(err).toBe(AuthenticateErrors.INCORRECT_PASSWORD)
   })
 
   test('should call passwordHasher.compare with correct values', async () => {

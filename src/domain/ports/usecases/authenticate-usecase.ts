@@ -1,4 +1,4 @@
-export interface AuthorizeParams {
+export interface AuthenticateParams {
   email: string
   password: string
 }
@@ -10,16 +10,16 @@ interface AccessToken {
 
 interface Error {
   accessToken?: never
-  err: AuthorizeErrors
+  err: AuthenticateErrors
 }
 
 export type AccessTokenOrError = AccessToken | Error
 
-export enum AuthorizeErrors {
+export enum AuthenticateErrors {
   EMAIL_NOT_REGISTERED,
   INCORRECT_PASSWORD
 }
 
-export interface AuthorizeUseCase {
-  exec: (params: AuthorizeParams) => Promise<AccessTokenOrError>
+export interface AuthenticateUseCase {
+  exec: (params: AuthenticateParams) => Promise<AccessTokenOrError>
 }
