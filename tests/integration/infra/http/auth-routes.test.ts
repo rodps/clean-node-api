@@ -2,6 +2,7 @@ import app from '@/main/config'
 import prisma from '@/infra/repositories/prisma/client'
 import request from 'supertest'
 import { env } from '@/main/env'
+import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 
 describe('Auth routes test', () => {
   afterEach(async () => {
@@ -46,6 +47,27 @@ describe('Auth routes test', () => {
           password: '123456789'
         })
         .expect(409)
+    })
+  })
+
+  describe('POST /signin', () => {
+    test('should return 200', async () => {
+      const hasher = new BcryptAdapter(12)
+      const password = await hasher.hash('123456789')
+      await prisma.user.create({
+        data: {
+          name: 'Rodrigo',
+          email: 'rodrigo@gmail.com',
+          password
+        }
+      })
+      await request(app)
+        .post('/signin')
+        .send({
+          email: 'rodrigo@gmail.com',
+          password: '123456789'
+        })
+        .expect(200)
     })
   })
 })
