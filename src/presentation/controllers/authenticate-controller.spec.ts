@@ -58,4 +58,10 @@ describe('Authenticate controller', () => {
     const result = await sut.handle({ email: 'any_email', password: 'any_password' })
     expect(result).toEqual(HttpResponse.unauthorized([new IncorrectPasswordError('password')]))
   })
+
+  test('should return ok if authentication is successful', async () => {
+    const { sut, authenticateSpy } = makeSut()
+    const result = await sut.handle({ email: 'any_email', password: 'any_password' })
+    expect(result).toEqual(HttpResponse.ok(authenticateSpy.result))
+  })
 })
