@@ -1,5 +1,7 @@
 import { AuthenticateSpy } from '@/../tests/mocks/domain/ports/usecases/authenticate-spy'
 import { ValidatorSpy } from '@/../tests/mocks/presentation/validator-spy'
+import { AuthenticateErrors } from '@/domain/ports/usecases/authenticate-usecase'
+import { EmailNotRegisteredError } from '../errors/email-not-registered-error'
 import { HttpResponse } from '../protocols/http-response'
 import { ValidationError } from '../protocols/validator'
 import { AuthenticateController } from './authenticate-controller'
@@ -40,5 +42,12 @@ describe('Authenticate controller', () => {
     const { sut, authenticateSpy } = makeSut()
     await sut.handle({ email: 'any_email', password: 'any_password' })
     expect(authenticateSpy.params).toEqual({ email: 'any_email', password: 'any_password' })
+  })
+
+  test('should return EmailNotRegisteredError with unauthorized HttpResponse if authentication returns EMAIL_NOT_REGISTERED ', async () => {
+    const { sut, authenticateSpy } = makeSut()
+    authenticateSpy.result = { err: AuthenticateErrors.EMAIL_NOT_REGISTERED }
+    const result = await sut.handle({ email: 'any_email', password: 'any_password' })
+    expect(result).toEqual(HttpResponse.unauthorized([new EmailNotRegisteredError('email')]))
   })
 })
