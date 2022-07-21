@@ -69,5 +69,15 @@ describe('Auth routes test', () => {
         })
         .expect(200)
     })
+
+    test('should return 401', async () => {
+      await request(app)
+        .post('/signin')
+        .send({
+          email: 'rodrigo@gmail.com',
+          password: '123456789'
+        })
+        .expect(401)
+    })
   })
 })
