@@ -1,8 +1,8 @@
-export interface AccessTokenGeneratorParams {
+export interface AccessTokenPayload {
   id: string
   userName: string
 }
 
 export interface AccessTokenGenerator {
-  generate: (payload: AccessTokenGeneratorParams) => string
+  generate: (payload: AccessTokenPayload) => string
 }
