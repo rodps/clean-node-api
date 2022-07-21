@@ -4,7 +4,9 @@ import { ValidationError, Validator } from '@/presentation/protocols/validator'
 
 export class AuthenticateValidator implements Validator<AuthenticateParams> {
   validate (request: AuthenticateParams): ValidationError[] | null {
-    if (!request.email) return [new RequiredFieldError('email')]
-    return null
+    const errors: ValidationError[] = []
+    if (!request.email) errors.push(new RequiredFieldError('email'))
+    if (!request.password) errors.push(new RequiredFieldError('password'))
+    return errors.length > 0 ? errors : null
   }
 }
