@@ -12,4 +12,10 @@ describe('Authenticate validator', () => {
     const error = sut.validate(fakeAutentication)
     expect(error).toContainEqual(new RequiredFieldError('email'))
   })
+
+  test('should return error if no password is provided', () => {
+    const sut = new AuthenticateValidator()
+    const error = sut.validate(fakeAutentication)
+    expect(error).toContainEqual(new RequiredFieldError('password'))
+  })
 })
