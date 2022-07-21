@@ -50,4 +50,9 @@ export class HttpResponse {
     const success = false
     return new HttpResponse(409, { success, errors })
   }
+
+  static unauthorized (errors?: ValidationError[]): HttpResponse {
+    const success = false
+    return new HttpResponse(401, { success, errors })
+  }
 }
