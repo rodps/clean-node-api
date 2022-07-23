@@ -63,7 +63,7 @@ describe('Create account controller', () => {
     const { sut, createAccountSpy } = makeSut()
     createAccountSpy.result = left(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
     const response = await sut.handle(fakeAccount)
-    expect(response).toEqual(HttpResponse.conflict([new EmailAlreadyInUseError('email')]))
+    expect(response).toEqual(HttpResponse.conflict(new EmailAlreadyInUseError('email')))
   })
 
   test('should return badRequest if validator returns error', async () => {

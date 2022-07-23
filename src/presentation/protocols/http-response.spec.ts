@@ -42,14 +42,11 @@ describe('HTTP Response', () => {
   })
 
   test('409 CONFLICT', () => {
-    const errors: ValidationError[] = [
-      new ValidationError('any_field', 'any_message')
-    ]
-    expect(HttpResponse.conflict(errors)).toEqual({
+    expect(HttpResponse.conflict(new ValidationError('any_field', 'any_message'))).toEqual({
       statusCode: 409,
       body: {
         success: false,
-        errors
+        errors: [new ValidationError('any_field', 'any_message')]
       }
     })
   })

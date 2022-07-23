@@ -46,9 +46,9 @@ export class HttpResponse {
     return new HttpResponse(500)
   }
 
-  static conflict (errors: ValidationError[]): HttpResponse {
+  static conflict (error: ValidationError): HttpResponse {
     const success = false
-    return new HttpResponse(409, { success, errors })
+    return new HttpResponse(409, { success, errors: [error] })
   }
 
   static unauthorized (errors?: ValidationError[]): HttpResponse {

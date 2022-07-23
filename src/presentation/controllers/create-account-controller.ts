@@ -18,7 +18,7 @@ export class CreateAccountController {
       const onError = (err: CreateAccountErrors): HttpResponse => {
         switch (err) {
           case CreateAccountErrors.EMAIL_ALREADY_EXISTS:
-            return HttpResponse.conflict([new EmailAlreadyInUseError('email')])
+            return HttpResponse.conflict(new EmailAlreadyInUseError('email'))
           default:
             return HttpResponse.serverError()
         }
