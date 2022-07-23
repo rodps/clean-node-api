@@ -1,3 +1,4 @@
+import { Book } from '../models/book'
 import { AddBookRepository } from '../ports/repositories/add-book-repository'
 import { CheckISBNExistsRepository } from '../ports/repositories/check-isbn-exists-repository'
 
@@ -14,8 +15,8 @@ export interface AddBookParams {
   copies: number
 }
 
-export interface IdOrError {
-  id?: string
+export interface BookOrError {
+  book?: Book
   err?: string
 }
 
@@ -25,11 +26,11 @@ export class AddBook {
     private readonly addBookRepository: AddBookRepository
   ) {}
 
-  async exec (params: AddBookParams): Promise<IdOrError> {
+  async exec (params: AddBookParams): Promise<BookOrError> {
     if (await this.checkIsbnExistsRepository.check(params.isbn)) {
       return { err: 'This isbn is already registered' }
     }
-    const id = await this.addBookRepository.add(params)
-    return { id }
+    const book = await this.addBookRepository.add(params)
+    return { book }
   }
 }
