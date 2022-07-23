@@ -1,7 +1,8 @@
 import { AddBookController } from './add-book-controller'
 import { AddBook, AddBookParams } from '@/domain/usecases/add-book'
-import { mock } from 'jest-mock-extended'
-import { Validator } from '../protocols/validator'
+import { DeepMockProxy, mock } from 'jest-mock-extended'
+import { ValidationError, Validator } from '../protocols/validator'
+import { HttpResponse } from '../protocols/http-response'
 
 const fakeBook: AddBookParams = {
   title: 'Fake Book',
@@ -17,8 +18,8 @@ const fakeBook: AddBookParams = {
 }
 
 interface SutTypes {
-  addBookSpy: AddBook
-  validatorSpy: Validator<AddBookParams>
+  addBookSpy: DeepMockProxy<AddBook>
+  validatorSpy: DeepMockProxy<Validator<AddBookParams>>
   sut: AddBookController
 }
 
@@ -38,5 +39,13 @@ describe('Add book controller', () => {
     const { sut, validatorSpy } = makeSut()
     await sut.handle(fakeBook)
     expect(validatorSpy.validate).toBeCalledWith(fakeBook)
+  })
+
+  test('should return bad request if validator returns error', async () => {
+    const { sut, validatorSpy } = makeSut()
+    const errors = [new ValidationError('any_field', 'any_message')]
+    validatorSpy.validate.mockReturnValueOnce(errors)
+    const httpResponse = await sut.handle(fakeBook)
+    expect(httpResponse).toEqual(HttpResponse.badRequest(errors))
   })
 })
