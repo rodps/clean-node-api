@@ -34,18 +34,18 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Add Book', () => {
-  test('should return the id of the added book', async () => {
+  test('should return the added book', async () => {
     const { sut, addBookRepositorySpy } = makeSut()
-    const { id, err } = await sut.exec(fakeBook)
-    expect(id).toBe(addBookRepositorySpy.id)
+    const { book, err } = await sut.exec(fakeBook)
+    expect(book).toEqual(addBookRepositorySpy.result)
     expect(err).toBeFalsy()
   })
 
   test('should return err if isbn provided is already registered', async () => {
     const { sut, checkISBNExistsRepositorySpy } = makeSut()
     checkISBNExistsRepositorySpy.result = true
-    const { id, err } = await sut.exec(fakeBook)
-    expect(id).toBeFalsy()
+    const { book, err } = await sut.exec(fakeBook)
+    expect(book).toBeFalsy()
     expect(err).toBe('This isbn is already registered')
   })
 
