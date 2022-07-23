@@ -17,6 +17,12 @@ const fakeBook: AddBookParams = {
   copies: 1
 }
 
+const addBookResult = Object.assign(fakeBook, {
+  id: 'any_id',
+  createdAt: new Date(),
+  updatedAt: null
+})
+
 interface SutTypes {
   addBookSpy: MockProxy<AddBook>
   validatorSpy: MockProxy<Validator<AddBookParams>>
@@ -25,13 +31,7 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const addBookSpy = mock<AddBook>()
-  addBookSpy.exec.mockResolvedValue({
-    book: Object.assign(fakeBook, {
-      id: 'any_id',
-      createdAt: new Date(),
-      updatedAt: null
-    })
-  })
+  addBookSpy.exec.mockResolvedValue({ book: addBookResult })
   const validatorSpy = mock<Validator<AddBookParams>>()
   const sut = new AddBookController(addBookSpy, validatorSpy)
   return {
@@ -61,5 +61,11 @@ describe('Add book controller', () => {
     addBookSpy.exec.mockResolvedValueOnce({ err: AddBookErrors.ISBN_ALREADY_REGISTERED })
     const httpResponse = await sut.handle(fakeBook)
     expect(httpResponse).toEqual(HttpResponse.conflict(new ValidationError('isbn', 'ISBN already registered')))
+  })
+
+  test('should return ok if no error occurs', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(fakeBook)
+    expect(httpResponse).toEqual(HttpResponse.ok(addBookResult))
   })
 })
