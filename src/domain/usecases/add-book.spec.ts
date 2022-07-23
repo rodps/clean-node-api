@@ -1,4 +1,4 @@
-import { AddBook, AddBookParams } from './add-book'
+import { AddBook, AddBookErrors, AddBookParams } from './add-book'
 import faker from 'faker'
 import { CheckISBNExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-isbn-exists-repository-spy'
 import { AddBookRepositorySpy } from '@/../tests/mocks/domain/ports/repositories/add-book-repository-spy'
@@ -46,7 +46,7 @@ describe('Add Book', () => {
     checkISBNExistsRepositorySpy.result = true
     const { book, err } = await sut.exec(fakeBook)
     expect(book).toBeFalsy()
-    expect(err).toBe('This isbn is already registered')
+    expect(err).toBe(AddBookErrors.ISBN_ALREADY_REGISTERED)
   })
 
   test('should call CheckISBExistsRepository with correct value', async () => {

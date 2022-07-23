@@ -17,7 +17,11 @@ export interface AddBookParams {
 
 export interface BookOrError {
   book?: Book
-  err?: string
+  err?: AddBookErrors
+}
+
+export enum AddBookErrors {
+  ISBN_ALREADY_REGISTERED
 }
 
 export class AddBook {
@@ -28,7 +32,7 @@ export class AddBook {
 
   async exec (params: AddBookParams): Promise<BookOrError> {
     if (await this.checkIsbnExistsRepository.check(params.isbn)) {
-      return { err: 'This isbn is already registered' }
+      return { err: AddBookErrors.ISBN_ALREADY_REGISTERED }
     }
     const book = await this.addBookRepository.add(params)
     return { book }
