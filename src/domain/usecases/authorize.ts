@@ -1,7 +1,7 @@
 import { TokenVerifier } from '../ports/crypt/token-verifier'
-import { AuhtorizeUseCase } from '../ports/usecases/authorize-usecase'
+import { AuthorizeUseCase } from '../ports/usecases/authorize-usecase'
 
-export class Authorize implements AuhtorizeUseCase {
+export class Authorize implements AuthorizeUseCase {
   constructor (
     private readonly tokenVerifier: TokenVerifier,
     private readonly role: string
