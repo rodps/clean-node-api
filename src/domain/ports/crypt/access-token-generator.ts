@@ -1,6 +1,6 @@
 export interface AccessTokenPayload {
   id: string
-  userName: string
+  role: string
 }
 
 export interface AccessTokenGenerator {

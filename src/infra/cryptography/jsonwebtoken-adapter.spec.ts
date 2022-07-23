@@ -10,13 +10,13 @@ jest.mock('jsonwebtoken', () => ({
 describe('Jwt Adapter', () => {
   test('should return a token if jwt succeeds', () => {
     const sut = new JWTAdapter('secret')
-    const result = sut.generate({ id: 'any_id', userName: 'any_name' })
+    const result = sut.generate({ id: 'any_id', role: 'any_role' })
     expect(result).toBe('any_token')
   })
 
   test('should call jwt with correct values', () => {
     const sut = new JWTAdapter('secret')
-    const payload = { id: 'any_id', userName: 'any_name' }
+    const payload = { id: 'any_id', role: 'any_role' }
     const signSpy = jest.spyOn(jwt, 'sign')
     sut.generate(payload)
     expect(signSpy).toHaveBeenCalledWith(payload, 'secret')

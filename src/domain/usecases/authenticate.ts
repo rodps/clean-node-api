@@ -20,7 +20,7 @@ export class Authenticate implements AuthenticateUseCase {
       return { err: AuthenticateErrors.INCORRECT_PASSWORD }
     }
     return {
-      accessToken: this.accessTokenGenerator.generate({ id: user.id, userName: user.name })
+      accessToken: this.accessTokenGenerator.generate({ id: user.id, role: 'user' })
     }
   }
 }

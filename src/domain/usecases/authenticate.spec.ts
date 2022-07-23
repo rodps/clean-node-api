@@ -97,7 +97,7 @@ describe('Authenticate', () => {
     passwordHasherSpy.compareResult = true
     const payload = {
       id: loadUserByEmailRepositorySpy.result.id,
-      userName: loadUserByEmailRepositorySpy.result.name
+      role: 'user'
     }
     await sut.exec({ email: 'correct_email', password: 'correct_password' })
     expect(accessTokenGeneratorSpy.payload).toEqual(payload)
