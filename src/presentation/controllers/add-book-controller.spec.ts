@@ -33,6 +33,7 @@ const makeSut = (): SutTypes => {
   const addBookSpy = mock<AddBook>()
   addBookSpy.exec.mockResolvedValue({ book: addBookResult })
   const validatorSpy = mock<Validator<AddBookParams>>()
+  validatorSpy.validate.mockReturnValue(null)
   const sut = new AddBookController(addBookSpy, validatorSpy)
   return {
     addBookSpy,
@@ -67,5 +68,12 @@ describe('Add book controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(fakeBook)
     expect(httpResponse).toEqual(HttpResponse.ok(addBookResult))
+  })
+
+  test('should return server error if AddBook throws error', async () => {
+    const { sut, addBookSpy } = makeSut()
+    addBookSpy.exec.mockRejectedValueOnce(new Error())
+    const httpResponse = await sut.handle(fakeBook)
+    expect(httpResponse).toEqual(HttpResponse.serverError())
   })
 })
