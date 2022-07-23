@@ -5,7 +5,7 @@ import { Authorize } from './authorize'
 class TokenVerifierSpy implements TokenVerifier {
   result: AccessTokenPayload | null = {
     id: 'any_id',
-    userName: 'any_name'
+    role: 'any_role'
   }
 
   token: string
@@ -48,5 +48,15 @@ describe('Authorize use case', () => {
     const { tokenVerifierSpy, sut } = makeSut()
     const id = await sut.exec('any_token')
     expect(id).toBe(tokenVerifierSpy.result?.id)
+  })
+
+  test('should return null if roles do not match', async () => {
+    const { tokenVerifierSpy, sut } = makeSut()
+    tokenVerifierSpy.result = {
+      id: 'any_id',
+      role: 'other_role'
+    }
+    const id = await sut.exec('any_token')
+    expect(id).toBe(null)
   })
 })
