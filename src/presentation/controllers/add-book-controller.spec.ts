@@ -1,6 +1,6 @@
 import { AddBookController } from './add-book-controller'
-import { AddBook, AddBookParams } from '@/domain/usecases/add-book'
-import { DeepMockProxy, mock } from 'jest-mock-extended'
+import { AddBook, AddBookErrors, AddBookParams } from '@/domain/usecases/add-book'
+import { mock, MockProxy } from 'jest-mock-extended'
 import { ValidationError, Validator } from '../protocols/validator'
 import { HttpResponse } from '../protocols/http-response'
 
@@ -18,13 +18,20 @@ const fakeBook: AddBookParams = {
 }
 
 interface SutTypes {
-  addBookSpy: DeepMockProxy<AddBook>
-  validatorSpy: DeepMockProxy<Validator<AddBookParams>>
+  addBookSpy: MockProxy<AddBook>
+  validatorSpy: MockProxy<Validator<AddBookParams>>
   sut: AddBookController
 }
 
 const makeSut = (): SutTypes => {
   const addBookSpy = mock<AddBook>()
+  addBookSpy.exec.mockResolvedValue({
+    book: Object.assign(fakeBook, {
+      id: 'any_id',
+      createdAt: new Date(),
+      updatedAt: null
+    })
+  })
   const validatorSpy = mock<Validator<AddBookParams>>()
   const sut = new AddBookController(addBookSpy, validatorSpy)
   return {
@@ -47,5 +54,12 @@ describe('Add book controller', () => {
     validatorSpy.validate.mockReturnValueOnce(errors)
     const httpResponse = await sut.handle(fakeBook)
     expect(httpResponse).toEqual(HttpResponse.badRequest(errors))
+  })
+
+  test('should return conflict if AddBook returns ISBN_ALREADY_REGISTERED', async () => {
+    const { sut, addBookSpy } = makeSut()
+    addBookSpy.exec.mockResolvedValueOnce({ err: AddBookErrors.ISBN_ALREADY_REGISTERED })
+    const httpResponse = await sut.handle(fakeBook)
+    expect(httpResponse).toEqual(HttpResponse.conflict(new ValidationError('isbn', 'ISBN already registered')))
   })
 })
