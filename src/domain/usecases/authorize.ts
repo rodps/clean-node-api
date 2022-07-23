@@ -9,6 +9,12 @@ export class Authorize implements AuthorizeUseCase {
 
   async exec (token: string): Promise<string | null> {
     const payload = await this.tokenVerifier.verify(token)
-    return payload?.id ?? null
+    if (payload) {
+      if (payload.role !== this.role) {
+        return null
+      }
+      return payload.id
+    }
+    return null
   }
 }
