@@ -3,6 +3,7 @@ import { AddBook, AddBookErrors, AddBookParams } from '@/domain/usecases/add-boo
 import { mock, MockProxy } from 'jest-mock-extended'
 import { ValidationError, Validator } from '../protocols/validator'
 import { HttpResponse } from '../protocols/http-response'
+import { env } from '@/main/env'
 
 const fakeBook: AddBookParams = {
   title: 'Fake Book',
@@ -64,10 +65,10 @@ describe('Add book controller', () => {
     expect(httpResponse).toEqual(HttpResponse.conflict(new ValidationError('isbn', 'ISBN already registered')))
   })
 
-  test('should return ok if no error occurs', async () => {
+  test('should return created if no error occurs', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(fakeBook)
-    expect(httpResponse).toEqual(HttpResponse.ok(addBookResult))
+    expect(httpResponse).toEqual(HttpResponse.created(`${env.baseUrl}/books/${addBookResult.id}`, addBookResult))
   })
 
   test('should return server error if AddBook throws error', async () => {
