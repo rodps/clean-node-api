@@ -48,5 +48,12 @@ describe('Books routes test', () => {
         .send(book)
         .expect(409)
     })
+
+    test('should return 400', async () => {
+      await request(app)
+        .post('/books')
+        .send({})
+        .expect(400)
+    })
   })
 })
