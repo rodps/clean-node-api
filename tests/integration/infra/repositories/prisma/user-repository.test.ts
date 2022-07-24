@@ -1,6 +1,6 @@
 import { CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
 import { UserRepository } from '@/infra/repositories/prisma/user-repository'
-import prisma from '@/infra/repositories/prisma/client'
+import prisma from './client'
 import faker from 'faker'
 
 describe('User repository integration', () => {
