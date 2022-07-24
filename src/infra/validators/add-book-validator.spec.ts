@@ -20,4 +20,10 @@ describe('Add book validator', () => {
     const errors = sut.validate(bookWithoutValues)
     expect(errors).toContainEqual({ field: 'title', message: 'This field is required' })
   })
+
+  test('should return error if author is not provided', () => {
+    const sut = new AddBookValidator()
+    const errors = sut.validate(bookWithoutValues)
+    expect(errors).toContainEqual({ field: 'author', message: 'This field is required' })
+  })
 })
