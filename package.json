@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "dotenv -e .env.test -- npx prisma migrate deploy && cross-env NODE_ENV=test jest --runInBand",
+    "test": "npm run migrate:test && cross-env NODE_ENV=test jest --runInBand",
     "test:staged": "npm test -- --passWithNoTests --findRelatedTests",
     "test:coverage": "npm test -- --coverage",
     "test:integration": "npm test ./tests/integration",
@@ -12,6 +12,7 @@
     "db:up": "docker-compose -f docker-compose.dev.yml up -d",
     "db:down": "docker-compose -f docker-compose.dev.yml down",
     "migrate": "dotenv -e .env.dev -- npx prisma migrate dev",
+    "migrate:test": "dotenv -e .env.test -- npx prisma migrate deploy",
     "dev": "cross-env NODE_ENV=dev ts-node ./src/main/server.ts",
     "prepare": "husky install"
   },
