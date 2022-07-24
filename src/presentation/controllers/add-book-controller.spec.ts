@@ -9,7 +9,7 @@ const fakeBook: AddBookParams = {
   isbn: 'any_isbn',
   pages: 999,
   author: 'any_author',
-  publish_date: new Date(),
+  publish_date: 'any_date',
   genre: 'any_genre',
   edition: 1,
   publisher: 'any_publisher',

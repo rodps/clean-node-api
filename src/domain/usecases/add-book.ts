@@ -10,7 +10,7 @@ export interface AddBookParams {
   edition: number
   publisher: string
   description: string
-  publish_date: Date
+  publish_date: string
   genre: string
   copies: number
 }
@@ -31,7 +31,7 @@ export class AddBook {
   ) {}
 
   async exec (params: AddBookParams): Promise<BookOrError> {
-    if (await this.checkIsbnExistsRepository.check(params.isbn)) {
+    if (await this.checkIsbnExistsRepository.checkIsbn(params.isbn)) {
       return { err: AddBookErrors.ISBN_ALREADY_REGISTERED }
     }
     const book = await this.addBookRepository.add(params)

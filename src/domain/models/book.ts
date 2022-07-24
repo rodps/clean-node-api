@@ -8,7 +8,7 @@ export interface Book extends Model {
   edition: number
   publisher: string
   description: string
-  publish_date: Date
+  publish_date: string
   genre: string
   copies: number
 }

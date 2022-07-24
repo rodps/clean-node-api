@@ -20,3 +20,21 @@ model User {
 
   @@map("users")
 }
+
+model Book {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?
+  title         String
+  isbn          String
+  pages         Int
+  author        String
+  edition       Int
+  publisher     String
+  description   String
+  publish_date  String
+  genre         String
+  copies        Int
+
+  @@map("books")
+}

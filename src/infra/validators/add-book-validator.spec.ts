@@ -10,7 +10,7 @@ const bookWithoutValues: AddBookParams = {
   genre: '',
   isbn: '',
   pages: 0,
-  publish_date: new Date(),
+  publish_date: '',
   publisher: ''
 }
 
