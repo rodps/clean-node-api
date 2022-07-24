@@ -1,4 +1,5 @@
 import { AddBook, AddBookErrors, AddBookParams } from '@/domain/usecases/add-book'
+import { env } from '@/main/env'
 import { HttpResponse } from '../protocols/http-response'
 import { Validator } from '../protocols/validator'
 
@@ -15,7 +16,7 @@ export class AddBookController {
 
       const { book, err } = await this.addBook.exec(req)
       if (book) {
-        return HttpResponse.ok(book)
+        return HttpResponse.created(`${env.baseUrl}/books/${book.id}`, book)
       }
       switch (err) {
         case AddBookErrors.ISBN_ALREADY_REGISTERED:
