@@ -24,8 +24,7 @@ export class AddBookController {
         default:
           return HttpResponse.serverError()
       }
-    } catch (err) {
-      console.log(err)
+    } catch {
       return HttpResponse.serverError()
     }
   }
