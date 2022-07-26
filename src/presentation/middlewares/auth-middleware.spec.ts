@@ -20,23 +20,23 @@ const makeSut = (): SutTypes => {
 describe('Auth middleware', () => {
   test('should return unauthorized error if Authorize fails', async () => {
     const { authorizeSpy, sut } = makeSut()
-    authorizeSpy.exec.mockResolvedValue(null)
-    const result = await sut.handle('any_token')
+    authorizeSpy.exec.mockResolvedValueOnce(null)
+    const result = await sut.handle('Bearer any_token')
     expect(result.error).toEqual(HttpResponse.unauthorized())
     expect(result.id).toBeFalsy()
   })
 
   test('should return id if Authorize succeed', async () => {
     const { authorizeSpy, sut } = makeSut()
-    authorizeSpy.exec.mockResolvedValue('any_id')
-    const result = await sut.handle('any_token')
+    authorizeSpy.exec.mockResolvedValueOnce('any_id')
+    const result = await sut.handle('Bearer any_token')
     expect(result.error).toBeFalsy()
     expect(result.id).toBe('any_id')
   })
 
   test('should call Authorize with correct values', async () => {
     const { authorizeSpy, sut } = makeSut()
-    await sut.handle('any_token')
+    await sut.handle('Bearer any_token')
     expect(authorizeSpy.exec).toHaveBeenCalledWith('any_token')
   })
 
@@ -45,8 +45,16 @@ describe('Auth middleware', () => {
     authorizeSpy.exec.mockImplementationOnce(() => {
       throw new Error()
     })
-    const result = await sut.handle('any_token')
+    const result = await sut.handle('Bearer any_token')
     expect(result.error).toEqual(HttpResponse.serverError())
+    expect(result.id).toBeFalsy()
+  })
+
+  test('should return unauthorized if bearer token is not present', async () => {
+    const { authorizeSpy, sut } = makeSut()
+    authorizeSpy.exec.mockResolvedValueOnce('any_id')
+    const result = await sut.handle('any_token')
+    expect(result.error).toEqual(HttpResponse.unauthorized())
     expect(result.id).toBeFalsy()
   })
 })
