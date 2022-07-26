@@ -10,8 +10,12 @@ export class AuthMiddleware {
   constructor (private readonly authorize: AuthorizeUseCase) {}
 
   async handle (accessToken: string): Promise<AuthMiddlewareResult> {
+    if (!accessToken.startsWith('Bearer ')) {
+      return { error: HttpResponse.unauthorized() }
+    }
+    const token = accessToken.substring(7)
     try {
-      const id = await this.authorize.exec(accessToken)
+      const id = await this.authorize.exec(token)
       if (!id) {
         return { error: HttpResponse.unauthorized() }
       }
