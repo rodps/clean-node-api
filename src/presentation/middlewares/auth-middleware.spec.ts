@@ -33,4 +33,10 @@ describe('Auth middleware', () => {
     expect(result.error).toBeFalsy()
     expect(result.id).toBe('any_id')
   })
+
+  test('should call Authorize with correct values', async () => {
+    const { authorizeSpy, sut } = makeSut()
+    await sut.handle('any_token')
+    expect(authorizeSpy.exec).toHaveBeenCalledWith('any_token')
+  })
 })
