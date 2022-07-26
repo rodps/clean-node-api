@@ -34,10 +34,11 @@ describe('User repository integration', () => {
   describe('Check email exists', () => {
     test('should return true if email exists', async () => {
       const sut = new UserRepository(prisma)
-      const fakeUser: CreateAccountParams = {
+      const fakeUser = {
         email: faker.internet.email(),
         name: faker.name.findName(),
-        password: faker.internet.password()
+        password: faker.internet.password(),
+        role: 'user'
       }
       await prisma.user.create({
         data: {
@@ -56,10 +57,11 @@ describe('User repository integration', () => {
   describe('Load user by email', () => {
     test('should return an user if email was found', async () => {
       const sut = new UserRepository(prisma)
-      const fakeUser: CreateAccountParams = {
+      const fakeUser = {
         email: faker.internet.email(),
         name: faker.name.findName(),
-        password: faker.internet.password()
+        password: faker.internet.password(),
+        role: 'user'
       }
       await prisma.user.create({
         data: {

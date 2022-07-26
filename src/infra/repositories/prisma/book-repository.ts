@@ -11,12 +11,21 @@ export class BookRepository implements AddBookRepository, CheckISBNExistsReposit
   }
 
   async add (book: AddBookParams): Promise<Book> {
-    const createdBook = await this.prisma.book.create({
+    return await this.prisma.book.create({
       data: {
-        ...book
+        author: book.author,
+        copies: book.copies,
+        description: book.description,
+        edition: book.edition,
+        genre: book.genre,
+        isbn: book.isbn,
+        pages: book.pages,
+        publish_date: book.publish_date,
+        publisher: book.publisher,
+        title: book.title,
+        addedBy: book.userId
       }
     })
-    return createdBook
   }
 
   async checkIsbn (isbn: string): Promise<boolean> {

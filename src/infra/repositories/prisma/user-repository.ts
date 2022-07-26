@@ -14,7 +14,10 @@ export class UserRepository implements CreateUserRepository, CheckEmailExistsRep
   async create (user: CreateAccountParams): Promise<string> {
     const createdUser = await this.prisma.user.create({
       data: {
-        ...user
+        email: user.email,
+        name: user.name,
+        password: user.password,
+        role: 'user'
       }
     })
     return createdUser.id

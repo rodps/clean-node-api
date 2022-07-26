@@ -11,7 +11,8 @@ const bookWithoutValues: AddBookParams = {
   isbn: '',
   pages: 0,
   publish_date: '',
-  publisher: ''
+  publisher: '',
+  userId: ''
 }
 
 describe('Add book validator', () => {

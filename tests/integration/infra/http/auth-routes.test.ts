@@ -36,7 +36,8 @@ describe('Auth routes test', () => {
         data: {
           name: 'Rodrigo',
           email: 'rodrigo@gmail.com',
-          password: '12345789'
+          password: '12345789',
+          role: 'user'
         }
       })
       await request(app)
@@ -83,7 +84,8 @@ describe('Auth routes test', () => {
         data: {
           name: 'Rodrigo',
           email: 'rodrigo@gmail.com',
-          password
+          password,
+          role: 'user'
         }
       })
       await request(app)

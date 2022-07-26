@@ -1,9 +1,27 @@
+import { JWTAdapter } from '@/infra/cryptography/jsonwebtoken-adapter'
 import prisma from '@/infra/repositories/prisma/client'
 import app from '@/main/config'
 import { env } from '@/main/env'
 import request from 'supertest'
 
 describe('Books routes test', () => {
+  let accessToken: string
+  let userId: string
+  const jwtAdapter = new JWTAdapter(env.jwtSecret)
+
+  beforeAll(async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: 'email@mail.com',
+        name: 'Rodrigo',
+        password: '123456',
+        role: 'user'
+      }
+    })
+    userId = user.id
+    accessToken = jwtAdapter.generate({ id: user.id, role: 'user' })
+  })
+
   afterEach(async () => {
     await prisma.book.deleteMany()
   })
@@ -11,6 +29,7 @@ describe('Books routes test', () => {
     test('should return 201', async () => {
       const response = await request(app)
         .post('/books')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({
           title: 'any_title',
           isbn: 'any_isbn',
@@ -41,10 +60,14 @@ describe('Books routes test', () => {
         copies: 1
       }
       await prisma.book.create({
-        data: book
+        data: {
+          ...book,
+          addedBy: userId
+        }
       })
       await request(app)
         .post('/books')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send(book)
         .expect(409)
     })
@@ -52,8 +75,16 @@ describe('Books routes test', () => {
     test('should return 400', async () => {
       await request(app)
         .post('/books')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send({})
         .expect(400)
+    })
+
+    test('should return 401', async () => {
+      await request(app)
+        .post('/books')
+        .send({})
+        .expect(401)
     })
   })
 })

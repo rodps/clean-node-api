@@ -13,7 +13,8 @@ const fakeBook: AddBookParams = {
   edition: 1,
   publisher: 'any_publisher',
   description: 'any_description',
-  copies: 1
+  copies: 1,
+  userId: 'any_id'
 }
 
 interface SutTypes {

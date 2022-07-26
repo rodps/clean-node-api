@@ -13,6 +13,7 @@ export interface AddBookParams {
   publish_date: string
   genre: string
   copies: number
+  userId: string
 }
 
 export interface BookOrError {
