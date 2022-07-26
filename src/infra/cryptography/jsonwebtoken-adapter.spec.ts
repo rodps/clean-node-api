@@ -1,4 +1,3 @@
-import { AccessTokenPayload } from '@/domain/ports/crypt/access-token-generator'
 import jwt from 'jsonwebtoken'
 import { JWTAdapter } from './jsonwebtoken-adapter'
 
@@ -6,7 +5,7 @@ jest.mock('jsonwebtoken', () => ({
   sign: (): string => {
     return 'any_token'
   },
-  verify: (): AccessTokenPayload => {
+  verify: (): jwt.JwtPayload => {
     return { id: 'any_id', role: 'any_role' }
   }
 }))
@@ -30,5 +29,13 @@ describe('Jwt Adapter', () => {
     const sut = new JWTAdapter('secret')
     const result = await sut.verify('any_id')
     expect(result).toEqual({ id: 'any_id', role: 'any_role' })
+  })
+
+  test('should return null if verify fails', async () => {
+    const sut = new JWTAdapter('secret')
+    const verifySpy = jest.spyOn(jwt, 'verify')
+    verifySpy.mockImplementationOnce(() => { throw new Error() })
+    const result = await sut.verify('any_id')
+    expect(result).toBe(null)
   })
 })
