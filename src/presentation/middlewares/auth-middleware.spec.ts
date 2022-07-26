@@ -39,4 +39,14 @@ describe('Auth middleware', () => {
     await sut.handle('any_token')
     expect(authorizeSpy.exec).toHaveBeenCalledWith('any_token')
   })
+
+  test('should return server error if Authorize throws error', async () => {
+    const { authorizeSpy, sut } = makeSut()
+    authorizeSpy.exec.mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const result = await sut.handle('any_token')
+    expect(result.error).toEqual(HttpResponse.serverError())
+    expect(result.id).toBeFalsy()
+  })
 })
