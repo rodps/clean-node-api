@@ -11,6 +11,7 @@ jobs:
         with:
           node-version: '16.15'
       - run: npm ci
+      - run: npm install -g dotenv-cli
       - run: npm run db:up
       - run: npm test
       - run: npm run db:down
