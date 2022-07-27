@@ -1,6 +1,8 @@
 # clean-node-api
 
 [![Node.js CI](https://github.com/rodps/clean-node-api/actions/workflows/test.yml/badge.svg)](https://github.com/rodps/clean-node-api/actions/workflows/test.yml)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 
 Projeto baseado no curso desenvolvido pelo professor Rodrigo Manguinho (https://www.udemy.com/course/tdd-com-mango/).
 
@@ -42,7 +44,11 @@ Como executar:
   ```console
   npm run db:up
   ```
-- Executar em modo desenvolvimento:
+- Executar as migrações do banco de dados:
+  ```console
+  npm run migrate
+  ```
+- Executar o servidor em modo desenvolvimento:
   ```console
   npm run dev
   ```
