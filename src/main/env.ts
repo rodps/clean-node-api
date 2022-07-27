@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'test') {
 
 const port = 3000
 export const env = {
-  port: process.env.APP_PORT ?? port,
+  port: process.env.PORT ?? port,
   baseUrl: process.env.BASE_URL ?? `http://localhost:${port}`,
   jwtSecret: process.env.JWT_SECRET ?? 'secret'
 }
