@@ -1,17 +1,19 @@
 {
     "compilerOptions": {
-        "outDir": "./dist",
+        "outDir": "dist",
         "module": "CommonJS",
         "target": "ES2019",
         "esModuleInterop": true,
         "allowJs": true,
         "strictNullChecks": true,
-        "baseUrl": "./src",
+        "baseUrl": "src",
         "paths": {
             "@/*": ["*"],
             "@mocks/*": ["../tests/mocks/*"]
         }
     },
+    "include": ["src"],
+    "exclude": ["src/**/*.spec.ts"],
     "ts-node": {
         "require": ["tsconfig-paths/register"]
     }
