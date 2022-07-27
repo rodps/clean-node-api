@@ -1,5 +1,7 @@
 # clean-node-api
 
+[![Node.js CI](https://github.com/rodps/clean-node-api/actions/workflows/test.yml/badge.svg)](https://github.com/rodps/clean-node-api/actions/workflows/test.yml)
+
 Projeto baseado no curso desenvolvido pelo professor Rodrigo Manguinho (https://www.udemy.com/course/tdd-com-mango/).
 
 Arquitetura:
