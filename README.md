@@ -11,7 +11,7 @@ Arquitetura:
 
 Utilizando o princípio da inversão de depêndencia, os detalhes da aplicação como frameworks e banco de dados apontam para o domínio, 
 possibilitando dessa forma que nossas regras de negócio fiquem menos acoplado a bibliotecas externas.
-Além disso, o uso de componentes separados nos permite que sejam testados individualmente, sem que a mudança na implementação de um componente afete o comportamento de outro.
+Além disso, o uso de componentes separados nos permite que sejam testados individualmente, sem que a mudança na implementação de um componente cause quebras em outro.
 
 A arquitetura da aplicação está dividida em três componentes principais:
 - Presentation:
@@ -54,6 +54,12 @@ Como executar:
   ```console
   npm run dev
   ```
-  
-A especificação da API pode ser encontrada em:
+
+Endpoints:
+- POST /signup  - Criar conta
+- POST /signin  - Login
+- POST /books   - Adicionar livro
+- POST /:userId/borrows  - Emprestar livro (in progress...)
+
+A especificação completa da API pode ser encontrada em:
 http://localhost:3000/docs
