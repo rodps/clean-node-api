@@ -37,6 +37,7 @@ Ferramentas utilizadas:
 - lint-staged
 - Conventional commits
 - Github Actions
+- Heroku
 
 Como executar:
 - Instalar as dependencias:
@@ -46,7 +47,7 @@ Como executar:
   ```console
   npm run db:up
   ```
-- Executar as migrações do banco de dados:
+- Executar as migrações no banco de dados:
   ```console
   npm run migrate
   ```
@@ -62,4 +63,4 @@ Endpoints:
 - POST /:userId/borrows  - Emprestar livro (in progress...)
 
 A especificação completa da API pode ser encontrada em:
-http://localhost:3000/docs
+https://clean-books-api.herokuapp.com/docs/
