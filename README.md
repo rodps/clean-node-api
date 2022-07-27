@@ -39,6 +39,9 @@ Ferramentas utilizadas:
 - Github Actions
 
 Como executar:
+- Instalar as dependencias:
+  ```console
+  npm install
 - Iniciar o banco de dados via docker compose (necessário ter o Docker instalado):
   ```console
   npm run db:up
