@@ -37,7 +37,7 @@ export const signupPath = {
           }
         }
       },
-      409: {
+      422: {
         description: 'Email already in use',
         content: {
           'application/json': {

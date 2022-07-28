@@ -35,8 +35,8 @@ export const signinPath = {
           }
         }
       },
-      400: {
-        description: 'Invalid parameters',
+      401: {
+        description: 'Unauthorized',
         content: {
           'application/json': {
             schema: {

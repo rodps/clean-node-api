@@ -81,7 +81,7 @@ export const addBookPath = {
           }
         }
       },
-      409: {
+      422: {
         description: 'ISBN already in use',
         content: {
           'application/json': {
