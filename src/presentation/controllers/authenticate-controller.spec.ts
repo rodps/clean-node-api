@@ -1,20 +1,19 @@
-import { AuthenticateSpy } from '@/../tests/mocks/domain/ports/usecases/authenticate-spy'
 import { ValidatorSpy } from '@/../tests/mocks/presentation/validator-spy'
-import { AuthenticateErrors } from '@/domain/ports/usecases/authenticate-usecase'
-import { EmailNotRegisteredError } from '../errors/email-not-registered-error'
-import { IncorrectPasswordError } from '../errors/incorrect-password-error'
+import { AuthenticateUseCase } from '@/domain/ports/usecases/authenticate-usecase'
+import { left, right } from 'fp-ts/lib/Either'
+import { mock, MockProxy } from 'jest-mock-extended'
 import { HttpResponse } from '../protocols/http-response'
 import { ValidationError } from '../protocols/validator'
 import { AuthenticateController } from './authenticate-controller'
 
 interface SutTypes {
-  authenticateSpy: AuthenticateSpy
+  authenticateSpy: MockProxy<AuthenticateUseCase>
   validatorSpy: ValidatorSpy
   sut: AuthenticateController
 }
 
 const makeSut = (): SutTypes => {
-  const authenticateSpy = new AuthenticateSpy()
+  const authenticateSpy = mock<AuthenticateUseCase>()
   const validatorSpy = new ValidatorSpy()
   const sut = new AuthenticateController(authenticateSpy, validatorSpy)
 
@@ -42,26 +41,27 @@ describe('Authenticate controller', () => {
   test('should call authenticate with correct values', async () => {
     const { sut, authenticateSpy } = makeSut()
     await sut.handle({ email: 'any_email', password: 'any_password' })
-    expect(authenticateSpy.params).toEqual({ email: 'any_email', password: 'any_password' })
+    expect(authenticateSpy.exec).toBeCalledWith({ email: 'any_email', password: 'any_password' })
   })
 
-  test('should return unauthorized if authentication returns EMAIL_NOT_REGISTERED ', async () => {
+  test('should return unauthorized if authentication returns error ', async () => {
     const { sut, authenticateSpy } = makeSut()
-    authenticateSpy.result = { err: AuthenticateErrors.EMAIL_NOT_REGISTERED }
+    authenticateSpy.exec.mockResolvedValue(left({ field: 'any_field', message: 'any message' }))
     const result = await sut.handle({ email: 'any_email', password: 'any_password' })
-    expect(result).toEqual(HttpResponse.unauthorized([new EmailNotRegisteredError('email')]))
-  })
-
-  test('should return unauthorized if authentication returns INCORRECT_PASSWORD', async () => {
-    const { sut, authenticateSpy } = makeSut()
-    authenticateSpy.result = { err: AuthenticateErrors.INCORRECT_PASSWORD }
-    const result = await sut.handle({ email: 'any_email', password: 'any_password' })
-    expect(result).toEqual(HttpResponse.unauthorized([new IncorrectPasswordError('password')]))
+    expect(result).toEqual(HttpResponse.unauthorized({ field: 'any_field', message: 'any message' }))
   })
 
   test('should return ok if authentication is successful', async () => {
     const { sut, authenticateSpy } = makeSut()
+    authenticateSpy.exec.mockResolvedValue(right({ accessToken: 'any_token' }))
     const result = await sut.handle({ email: 'any_email', password: 'any_password' })
-    expect(result).toEqual(HttpResponse.ok(authenticateSpy.result))
+    expect(result).toEqual(HttpResponse.ok({ accessToken: 'any_token' }))
+  })
+
+  test('should return server error if any exception occurrs', async () => {
+    const { sut, authenticateSpy } = makeSut()
+    jest.spyOn(authenticateSpy, 'exec').mockImplementationOnce(() => { throw new Error() })
+    const result = await sut.handle({ email: 'any_email', password: 'any_password' })
+    expect(result).toEqual(HttpResponse.serverError())
   })
 })

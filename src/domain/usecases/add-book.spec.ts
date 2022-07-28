@@ -1,7 +1,8 @@
-import { AddBook, AddBookErrors, AddBookParams } from './add-book'
+import { AddBook, AddBookParams } from './add-book'
 import faker from 'faker'
 import { CheckISBNExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-isbn-exists-repository-spy'
 import { AddBookRepositorySpy } from '@/../tests/mocks/domain/ports/repositories/add-book-repository-spy'
+import '@relmify/jest-fp-ts'
 
 const fakeBook: AddBookParams = {
   title: 'Fake Book',
@@ -37,17 +38,15 @@ const makeSut = (): SutTypes => {
 describe('Add Book', () => {
   test('should return the added book', async () => {
     const { sut, addBookRepositorySpy } = makeSut()
-    const { book, err } = await sut.exec(fakeBook)
-    expect(book).toEqual(addBookRepositorySpy.result)
-    expect(err).toBeFalsy()
+    const result = await sut.exec(fakeBook)
+    expect(result).toEqualRight(addBookRepositorySpy.result)
   })
 
   test('should return err if isbn provided is already registered', async () => {
     const { sut, checkISBNExistsRepositorySpy } = makeSut()
     checkISBNExistsRepositorySpy.result = true
-    const { book, err } = await sut.exec(fakeBook)
-    expect(book).toBeFalsy()
-    expect(err).toBe(AddBookErrors.ISBN_ALREADY_REGISTERED)
+    const result = await sut.exec(fakeBook)
+    expect(result).toEqualLeft({ field: 'isbn', message: 'This ISBN is already added' })
   })
 
   test('should call CheckISBExistsRepository with correct value', async () => {

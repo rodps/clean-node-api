@@ -1,4 +1,5 @@
 import { Either } from 'fp-ts/lib/Either'
+import { UseCaseError } from '../errors/use-case-error'
 
 export interface CreateAccountParams {
   name: string
@@ -6,10 +7,6 @@ export interface CreateAccountParams {
   password: string
 }
 
-export enum CreateAccountErrors {
-  EMAIL_ALREADY_EXISTS
-}
-
 export interface CreateAccountUseCase {
-  exec: (params: CreateAccountParams) => Promise<Either<CreateAccountErrors, string>>
+  exec: (params: CreateAccountParams) => Promise<Either<UseCaseError, string>>
 }

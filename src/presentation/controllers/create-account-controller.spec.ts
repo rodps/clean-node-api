@@ -1,21 +1,20 @@
-import { CreateAccountSpy } from '@/../tests/mocks/domain/ports/usecases/create-account-spy'
-import { CreateAccountErrors, CreateAccountParams } from '@/domain/ports/usecases/create-account-usecase'
+import { CreateAccountParams, CreateAccountUseCase } from '@/domain/ports/usecases/create-account-usecase'
 import { CreateAccountController } from './create-account-controller'
 import faker from 'faker'
-import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
 import { left, right } from 'fp-ts/lib/Either'
 import { ValidatorSpy } from '@mocks/presentation/validator-spy'
 import { HttpResponse } from '../protocols/http-response'
 import { ValidationError } from '../protocols/validator'
+import { mock, MockProxy } from 'jest-mock-extended'
 
 interface SutTypes {
-  createAccountSpy: CreateAccountSpy
+  createAccountSpy: MockProxy<CreateAccountUseCase>
   validatorSpy: ValidatorSpy
   sut: CreateAccountController
 }
 
 const makeSut = (): SutTypes => {
-  const createAccountSpy = new CreateAccountSpy()
+  const createAccountSpy = mock<CreateAccountUseCase>()
   const validatorSpy = new ValidatorSpy()
   const sut = new CreateAccountController(
     createAccountSpy,
@@ -38,13 +37,13 @@ describe('Create account controller', () => {
   test('should call createAccount with correct values', async () => {
     const { sut, createAccountSpy } = makeSut()
     await sut.handle(fakeAccount)
-    expect(createAccountSpy.params).toEqual(fakeAccount)
+    expect(createAccountSpy.exec).toHaveBeenCalledWith(fakeAccount)
   })
 
   test('should return httpResponse status created if no error occurs', async () => {
     const { sut, createAccountSpy } = makeSut()
     const userId = faker.datatype.uuid()
-    createAccountSpy.result = right(userId)
+    createAccountSpy.exec.mockResolvedValue(right(userId))
     const response = await sut.handle(fakeAccount)
     expect(response.statusCode).toBe(201)
     expect(response.header?.location).toBe(`/users/${userId}`)
@@ -59,11 +58,11 @@ describe('Create account controller', () => {
     expect(response.statusCode).toBe(500)
   })
 
-  test('should return conflict if createAccount returns EMAIL_ALREADY_EXISTS', async () => {
+  test('should return unprocessable entity if createAccount returns error', async () => {
     const { sut, createAccountSpy } = makeSut()
-    createAccountSpy.result = left(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
+    createAccountSpy.exec.mockResolvedValue(left({ field: 'any_field', message: 'any message' }))
     const response = await sut.handle(fakeAccount)
-    expect(response).toEqual(HttpResponse.conflict(new EmailAlreadyInUseError('email')))
+    expect(response).toEqual(HttpResponse.unprocessableEntity({ field: 'any_field', message: 'any message' }))
   })
 
   test('should return badRequest if validator returns error', async () => {

@@ -1,6 +1,6 @@
-import { CreateAccountErrors, CreateAccountParams, CreateAccountUseCase } from '@/domain/ports/usecases/create-account-usecase'
+import { UseCaseError } from '@/domain/ports/errors/use-case-error'
+import { CreateAccountParams, CreateAccountUseCase } from '@/domain/ports/usecases/create-account-usecase'
 import { fold } from 'fp-ts/lib/Either'
-import { EmailAlreadyInUseError } from '../errors/email-already-in-use-error'
 import { HttpResponse } from '../protocols/http-response'
 import { Validator } from '../protocols/validator'
 
@@ -15,13 +15,8 @@ export class CreateAccountController {
       const validationError = this.validator.validate(req)
       if (validationError) return HttpResponse.badRequest(validationError)
 
-      const onError = (err: CreateAccountErrors): HttpResponse => {
-        switch (err) {
-          case CreateAccountErrors.EMAIL_ALREADY_EXISTS:
-            return HttpResponse.conflict(new EmailAlreadyInUseError('email'))
-          default:
-            return HttpResponse.serverError()
-        }
+      const onError = (err: UseCaseError): HttpResponse => {
+        return HttpResponse.unprocessableEntity(err)
       }
 
       const onSuccess = (id: string): HttpResponse => {

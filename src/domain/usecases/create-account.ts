@@ -1,8 +1,9 @@
 import { CreateUserRepository } from '@/domain/ports/repositories/create-user-repository'
 import { PasswordHasher } from '@/domain/ports/crypt/password-hasher'
 import { CheckEmailExistsRepository } from '../ports/repositories/check-email-exists-repository'
-import { CreateAccountErrors, CreateAccountParams, CreateAccountUseCase } from '../ports/usecases/create-account-usecase'
+import { CreateAccountParams, CreateAccountUseCase } from '../ports/usecases/create-account-usecase'
 import { Either, left, right } from 'fp-ts/lib/Either'
+import { UseCaseError } from '../ports/errors/use-case-error'
 
 export class CreateAccount implements CreateAccountUseCase {
   constructor (
@@ -11,11 +12,11 @@ export class CreateAccount implements CreateAccountUseCase {
     private readonly passwordHasher: PasswordHasher
   ) {}
 
-  async exec (params: CreateAccountParams): Promise<Either<CreateAccountErrors, string>> {
+  async exec (params: CreateAccountParams): Promise<Either<UseCaseError, string>> {
     const { name, email } = params
 
     const emailAlreadyExists = await this.checkEmailExistsRepository.checkEmail(email)
-    if (emailAlreadyExists) return left(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
+    if (emailAlreadyExists) return left({ field: 'email', message: 'Email already in use' })
 
     const password = await this.passwordHasher.hash(params.password)
     const id = await this.createUserRepo.create({ name, email, password })
