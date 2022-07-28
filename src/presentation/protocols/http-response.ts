@@ -51,8 +51,13 @@ export class HttpResponse {
     return new HttpResponse(409, { success, errors: [error] })
   }
 
-  static unauthorized (errors?: ValidationError[]): HttpResponse {
+  static unprocessableEntity (error: ValidationError): HttpResponse {
     const success = false
-    return new HttpResponse(401, { success, errors })
+    return new HttpResponse(422, { success, errors: [error] })
+  }
+
+  static unauthorized (error?: ValidationError): HttpResponse {
+    const success = false
+    return new HttpResponse(401, { success, errors: error ? [error] : undefined })
   }
 }

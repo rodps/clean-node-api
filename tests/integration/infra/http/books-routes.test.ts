@@ -22,6 +22,10 @@ describe('Books routes test', () => {
     accessToken = jwtAdapter.generate({ id: user.id, role: 'user' })
   })
 
+  afterAll(async () => {
+    await prisma.user.deleteMany()
+  })
+
   afterEach(async () => {
     await prisma.book.deleteMany()
   })
@@ -46,7 +50,7 @@ describe('Books routes test', () => {
       expect(response.headers.location).toBe(`${env.baseUrl}/books/${response.body.data.id as string}`)
     })
 
-    test('should return 409', async () => {
+    test('should return 422', async () => {
       const book = {
         title: 'any_title',
         isbn: 'any_isbn',
@@ -69,7 +73,7 @@ describe('Books routes test', () => {
         .post('/books')
         .set('Authorization', `Bearer ${accessToken}`)
         .send(book)
-        .expect(409)
+        .expect(422)
     })
 
     test('should return 400', async () => {

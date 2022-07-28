@@ -1,4 +1,6 @@
+import { Either, left, right } from 'fp-ts/lib/Either'
 import { Book } from '../models/book'
+import { UseCaseError } from '../ports/errors/use-case-error'
 import { AddBookRepository } from '../ports/repositories/add-book-repository'
 import { CheckISBNExistsRepository } from '../ports/repositories/check-isbn-exists-repository'
 
@@ -16,26 +18,17 @@ export interface AddBookParams {
   userId: string
 }
 
-export interface BookOrError {
-  book?: Book
-  err?: AddBookErrors
-}
-
-export enum AddBookErrors {
-  ISBN_ALREADY_REGISTERED
-}
-
 export class AddBook {
   constructor (
     private readonly checkIsbnExistsRepository: CheckISBNExistsRepository,
     private readonly addBookRepository: AddBookRepository
   ) {}
 
-  async exec (params: AddBookParams): Promise<BookOrError> {
+  async exec (params: AddBookParams): Promise<Either<UseCaseError, Book>> {
     if (await this.checkIsbnExistsRepository.checkIsbn(params.isbn)) {
-      return { err: AddBookErrors.ISBN_ALREADY_REGISTERED }
+      return left({ field: 'isbn', message: 'This ISBN is already added' })
     }
     const book = await this.addBookRepository.add(params)
-    return { book }
+    return right(book)
   }
 }

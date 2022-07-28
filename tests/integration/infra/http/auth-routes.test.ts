@@ -31,7 +31,7 @@ describe('Auth routes test', () => {
       }
     })
 
-    test('should return 409', async () => {
+    test('should return 422', async () => {
       await prisma.user.create({
         data: {
           name: 'Rodrigo',
@@ -47,7 +47,7 @@ describe('Auth routes test', () => {
           email: 'rodrigo@gmail.com',
           password: '123456789'
         })
-        .expect(409)
+        .expect(422)
     })
 
     test('should return 400', async () => {

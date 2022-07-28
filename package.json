@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx prisma migrate deploy && node dist/main/server.js",
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc -p tsconfig-build.json",
     "test": "npm run migrate:test && cross-env NODE_ENV=test jest --runInBand",
     "test:staged": "npm test -- --passWithNoTests --findRelatedTests",
     "test:coverage": "npm test -- --coverage",

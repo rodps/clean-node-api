@@ -3,7 +3,6 @@ import { CreateUserRepositorySpy } from '@mocks/domain/ports/repositories/create
 import { PasswordHasherSpy } from '@/../tests/mocks/domain/ports/crypt/password-hasher-spy'
 import { CheckEmailExistsRepositorySpy } from '@mocks/domain/ports/repositories/check-email-exists-repository-spy'
 import faker from 'faker'
-import { CreateAccountErrors } from '../ports/usecases/create-account-usecase'
 import '@relmify/jest-fp-ts'
 
 interface SutTypes {
@@ -47,7 +46,7 @@ describe('Create account', () => {
     const { sut, checkEmailExistsRepositorySpy } = makeSut()
     checkEmailExistsRepositorySpy.result = true
     const result = await sut.exec(fakeUser)
-    expect(result).toEqualLeft(CreateAccountErrors.EMAIL_ALREADY_EXISTS)
+    expect(result).toEqualLeft({ field: 'email', message: 'Email already in use' })
   })
 
   test('should call CreateUserRepository with correct values', async () => {

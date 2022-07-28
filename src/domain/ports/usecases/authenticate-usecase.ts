@@ -1,25 +1,15 @@
+import { Either } from 'fp-ts/lib/Either'
+import { UseCaseError } from '../errors/use-case-error'
+
 export interface AuthenticateParams {
   email: string
   password: string
 }
 
-interface AccessToken {
+export interface AccessToken {
   accessToken?: string
-  err?: never
-}
-
-interface Error {
-  accessToken?: never
-  err: AuthenticateErrors
-}
-
-export type AccessTokenOrError = AccessToken | Error
-
-export enum AuthenticateErrors {
-  EMAIL_NOT_REGISTERED,
-  INCORRECT_PASSWORD
 }
 
 export interface AuthenticateUseCase {
-  exec: (params: AuthenticateParams) => Promise<AccessTokenOrError>
+  exec: (params: AuthenticateParams) => Promise<Either<UseCaseError, AccessToken>>
 }

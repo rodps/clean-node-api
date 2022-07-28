@@ -1,9 +1,10 @@
 import { AddBookController } from './add-book-controller'
-import { AddBook, AddBookErrors, AddBookParams } from '@/domain/usecases/add-book'
+import { AddBook, AddBookParams } from '@/domain/usecases/add-book'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { ValidationError, Validator } from '../protocols/validator'
 import { HttpResponse } from '../protocols/http-response'
 import { env } from '@/main/env'
+import { left, right } from 'fp-ts/lib/Either'
 
 const fakeBook: AddBookParams = {
   title: 'Fake Book',
@@ -33,7 +34,7 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const addBookSpy = mock<AddBook>()
-  addBookSpy.exec.mockResolvedValue({ book: addBookResult })
+  addBookSpy.exec.mockResolvedValue(right(addBookResult))
   const validatorSpy = mock<Validator<AddBookParams>>()
   validatorSpy.validate.mockReturnValue(null)
   const sut = new AddBookController(addBookSpy, validatorSpy)
@@ -61,9 +62,9 @@ describe('Add book controller', () => {
 
   test('should return conflict if AddBook returns ISBN_ALREADY_REGISTERED', async () => {
     const { sut, addBookSpy } = makeSut()
-    addBookSpy.exec.mockResolvedValueOnce({ err: AddBookErrors.ISBN_ALREADY_REGISTERED })
+    addBookSpy.exec.mockResolvedValueOnce(left({ field: 'isbn', message: 'This ISBN is already registered' }))
     const httpResponse = await sut.handle(fakeBook)
-    expect(httpResponse).toEqual(HttpResponse.conflict(new ValidationError('isbn', 'ISBN already registered')))
+    expect(httpResponse).toEqual(HttpResponse.unprocessableEntity({ field: 'isbn', message: 'This ISBN is already registered' }))
   })
 
   test('should return created if no error occurs', async () => {

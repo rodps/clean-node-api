@@ -4,7 +4,7 @@ import { LoadUserByEmailRepositorySpy } from '@mocks/domain/ports/repositories/l
 import { Authenticate } from './authenticate'
 import faker from 'faker'
 import { UserModel } from '../models/user'
-import { AuthenticateErrors } from '../ports/usecases/authenticate-usecase'
+import '@relmify/jest-fp-ts'
 
 interface SutTypes {
   loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy
@@ -43,9 +43,8 @@ describe('Authenticate', () => {
   test('should return err if email dont exists', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut()
     loadUserByEmailRepositorySpy.result = null
-    const { accessToken, err } = await sut.exec({ email: 'any_email', password: 'any_password' })
-    expect(accessToken).toBeFalsy()
-    expect(err).toBe(AuthenticateErrors.EMAIL_NOT_REGISTERED)
+    const result = await sut.exec({ email: 'any_email', password: 'any_password' })
+    expect(result).toEqualLeft({ field: 'email', message: 'Email not registered' })
   })
 
   test('should call loadUserByEmailRepo with correct values', async () => {
@@ -58,9 +57,8 @@ describe('Authenticate', () => {
   test('should return err if password is wrong', async () => {
     const { sut, passwordHasherSpy } = makeSut()
     passwordHasherSpy.compareResult = false
-    const { accessToken, err } = await sut.exec({ email: 'any_email', password: 'incorrect_password' })
-    expect(accessToken).toBeFalsy()
-    expect(err).toBe(AuthenticateErrors.INCORRECT_PASSWORD)
+    const result = await sut.exec({ email: 'any_email', password: 'incorrect_password' })
+    expect(result).toEqualLeft({ field: 'password', message: 'Incorrect password' })
   })
 
   test('should call passwordHasher.compare with correct values', async () => {
@@ -81,9 +79,8 @@ describe('Authenticate', () => {
     } = makeSut()
     loadUserByEmailRepositorySpy.result = fakeUser
     passwordHasherSpy.compareResult = true
-    const { accessToken, err } = await sut.exec({ email: 'correct_email', password: 'correct_password' })
-    expect(err).toBeFalsy()
-    expect(accessToken).toBe(accessTokenGeneratorSpy.result)
+    const result = await sut.exec({ email: 'correct_email', password: 'correct_password' })
+    expect(result).toEqualRight({ accessToken: accessTokenGeneratorSpy.result })
   })
 
   test('should call accessTokenGenerator with correct values', async () => {
