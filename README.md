@@ -38,6 +38,7 @@ Ferramentas utilizadas:
 - Conventional commits
 - Github Actions
 - Heroku
+- CI/CD
 
 Como executar:
 - Instalar as dependencias:
