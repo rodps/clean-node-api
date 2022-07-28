@@ -22,6 +22,10 @@ describe('Books routes test', () => {
     accessToken = jwtAdapter.generate({ id: user.id, role: 'user' })
   })
 
+  afterAll(async () => {
+    await prisma.user.deleteMany()
+  })
+
   afterEach(async () => {
     await prisma.book.deleteMany()
   })
