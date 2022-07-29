@@ -10,8 +10,17 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16.15'
-      - run: npm ci
-      - run: npm install -g dotenv-cli
-      - run: npm run db:up
-      - run: npm test
-      - run: npm run db:down
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install -g dotenv-cli
+      - name: Run tests
+        run: |
+          npm run db:up
+          npm run test:coverage
+          npm run db:down
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

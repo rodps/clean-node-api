@@ -1,5 +1,7 @@
 [![Node.js CI](https://github.com/rodps/clean-node-api/actions/workflows/test.yml/badge.svg)](https://github.com/rodps/clean-node-api/actions/workflows/test.yml)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Known Vulnerabilities](https://snyk.io/test/github/rodps/clean-node-api/badge.svg)](https://snyk.io/test/github/rodps/clean-node-api)
+
 
 # clean-node-api
 
